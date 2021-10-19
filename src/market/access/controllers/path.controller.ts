@@ -18,7 +18,7 @@ export class PathController {
     @Roles(AuthType.ADMIN)
     @Post("create")
     create(@Body() createPathDto: PathDto): Promise<Path> {
-        return this.pathService.create(new PathDto(createPathDto));
+        return this.pathService.create(new PathDto(createPathDto), undefined);
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)
