@@ -10,10 +10,15 @@ export type ReqAuth = Request & { user: { auth: Auth } }
 
 export class CommonRepository<Entity> extends Repository<Entity> {
 
-    save<T extends DeepPartial<Entity> & CommonEntity>(entity: T, options?: SaveOptions, req?: ReqAuth): Promise<T & Entity> {
+    saveAuth<T extends DeepPartial<Entity> & CommonEntity>(entity: T, req: ReqAuth): Promise<T & Entity> {
         omit(entity);
         entity.createdBy = req.user.auth.id;
         entity.updatedBy = null;
+        return super.save(entity);
+    }
+
+    saveAlt<T extends DeepPartial<Entity>>(entity: T, options?: SaveOptions): Promise<T & Entity> {
+        omit(entity);
         return super.save(entity, options);
     }
 
@@ -23,7 +28,9 @@ export class CommonRepository<Entity> extends Repository<Entity> {
         req?: ReqAuth
     ): Promise<UpdateResult> {
         omit(partialEntity);
-        partialEntity.updatedBy = req.user.auth.id;
+        if (req) {
+            partialEntity.updatedBy = req.user.auth.id;
+        }
         return super.update(criteria, partialEntity);
     }
 

@@ -1,4 +1,4 @@
-import { Controller, UseGuards, Post, Get, Patch, Res, Body, Query } from "@nestjs/common";
+import { Controller, UseGuards, Post, Get, Patch, Res, Body, Query, Scope, Delete } from "@nestjs/common";
 import { AuthService } from "./services/auth.service";
 import { AuthDataDto } from "./dto/auth-data.dto";
 import { TokenData } from "./interfaces/token-data.interface";
@@ -14,14 +14,14 @@ import { UserAuth } from "./decorators/auth.decorator";
 import { Auth } from "./entities/auth.entity";
 import { FindConditions } from "typeorm";
 
-@Controller({ path: "auth" })
+@Controller({ path: "auth", scope: Scope.REQUEST })
 export class AuthController {
 
     constructor(private authService: AuthService) { }
 
     @Post("register")
     register(@Body() createAuthDto: CreateAuthDto): Promise<SuccessDto> {
-        return this.authService.register(createAuthDto);
+        return this.authService.register(new CreateAuthDto(createAuthDto));
     }
 
     @Get("verify")
@@ -103,17 +103,23 @@ export class AuthController {
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)
-    @Get("getOne")
     @Roles(AuthType.ADMIN)
+    @Get("getOne")
     getOne(@Body("filter") filter: FindConditions<Auth>): Promise<Auth> {
         return this.authService.getOne(filter);
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)
-    @Roles(AuthType.ADMIN)
     @Get("getAll")
     getAll(): Promise<Auth[]> {
         return this.authService.getAll();
+    }
+
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(AuthType.ADMIN)
+    @Delete("hardDelete")
+    hardDelete(@Query("user_id") user_id: string): Promise<SuccessDto> {
+        return this.authService.hardDelete(user_id);
     }
 
 }

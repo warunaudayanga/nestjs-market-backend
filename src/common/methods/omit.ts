@@ -1,3 +1,5 @@
-export const omit = (obj): void => {
-    Object.keys(obj).forEach(key => obj[key] === undefined && delete obj[key]);
+export const omit = (obj, keys?: string[]): void => {
+    Object.keys(obj).forEach(key => {
+        return (obj[key] === undefined || keys.includes(key)) && delete obj[key];
+    });
 };

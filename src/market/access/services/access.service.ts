@@ -22,7 +22,7 @@ export class AccessService {
 
     async create(createAccessDto: AccessDto): Promise<Access> {
         try {
-            return await this.accessRepository.save(createAccessDto, undefined, this.req as ReqAuth);
+            return await this.accessRepository.saveAuth(createAccessDto, this.req as ReqAuth);
         } catch (err: any) {
             if (err.errno === 1452) {
                 throw new HttpException(AccessErrors.ACCESS_404_PATH, HttpStatus.NOT_FOUND);

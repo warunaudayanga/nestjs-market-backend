@@ -10,6 +10,7 @@ import { join } from "path";
 import { CommonModule } from "./common/common.module";
 import { AuthModule } from "./auth/auth.module";
 import { AccessModule } from "./market/access/access.module";
+import { UserModule } from "./market/user/user.module";
 
 @Module({
     imports: [
@@ -20,7 +21,8 @@ import { AccessModule } from "./market/access/access.module";
         TypeOrmModule.forRoot(process.env.NODE_ENV === "production" ? prod : dev),
         AuthModule,
         CommonModule,
-        AccessModule
+        AccessModule,
+        UserModule
     ],
     controllers: [AppController],
     providers: [AppService]

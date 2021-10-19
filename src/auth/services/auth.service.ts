@@ -19,6 +19,7 @@ import { VerifyToken } from "../entities/verify-token.entity";
 import { CreateAuthDto } from "../dto/create-auth.dto";
 import { CryptAuthDto } from "../dto/crypt-auth.dto";
 import { AuthDto } from "../dto/auth.dto";
+import { UserErrors } from "../../market/user/dto/user.errors.dto";
 
 @Injectable()
 export class AuthService {
@@ -63,7 +64,7 @@ export class AuthService {
     }
 
     async register(createAuthDto: CreateAuthDto): Promise<SuccessDto> {
-        const authDto = new AuthDto(createAuthDto.email, AuthService.generatePassword(createAuthDto.password));
+        const authDto = new AuthDto(createAuthDto);
         const auth = await this.create(authDto);
         const verifyToken = await this.verifyTokenService.create(auth, AuthService.generateRandomHash());
         await this.sendVerificationEmail(auth, verifyToken);
@@ -167,12 +168,14 @@ export class AuthService {
                 return Promise.reject(new HttpException(AuthErrors.AUTH_401_INVALID, HttpStatus.UNAUTHORIZED));
             }
 
+            const authWithUser = await this.get(auth.id);
+
             const tokenObject = this.issueJWT(auth);
 
             return {
                 token: tokenObject.token,
                 expiresIn: tokenObject.expires,
-                auth: auth.getUserDto()
+                auth: authWithUser
             };
 
         } catch (err: any) {
@@ -181,7 +184,7 @@ export class AuthService {
 
     }
 
-    async create(auth: Partial<Auth>): Promise<Auth> {
+    async create(auth: Auth): Promise<Auth> {
         try {
             const createdAuth = await this.authRepository.save(auth);
             if (createdAuth) {
@@ -190,6 +193,9 @@ export class AuthService {
             return Promise.reject(new HttpException(AuthErrors.AUTH_500_CREATE, HttpStatus.INTERNAL_SERVER_ERROR));
         } catch (err: any) {
             if (err.code === "ER_DUP_ENTRY") {
+                if (err.sql.match(/(INSERT INTO `users`)/)) {
+                    throw new HttpException(UserErrors.USER_409_EXIST_NIC, HttpStatus.CONFLICT);
+                }
                 throw new HttpException(AuthErrors.AUTH_409_EXIST_EMAIL, HttpStatus.CONFLICT);
             }
             this.logger.error(err);
@@ -314,6 +320,18 @@ export class AuthService {
         }
     }
 
+    async hardDelete(id: string): Promise<SuccessDto> {
+        try {
+            const deleteResult = await this.authRepository.delete(id);
+            if (deleteResult.affected > 0) {
+                return Promise.resolve(new SuccessDto());
+            }
+            return Promise.reject(new HttpException(AuthErrors.AUTH_404_ID, HttpStatus.NOT_FOUND));
+        } catch (err: any) {
+            throw new HttpException(AuthErrors.AUTH_500_DELETE, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     public issueJWT = (auth: Auth): { expires: number; token: string } => {
         const id = auth.id;
         const expiresIn = 60 * 60 * 24;
@@ -327,8 +345,12 @@ export class AuthService {
 
     private async sendVerificationEmail(auth: Auth, verifyToken: VerifyToken): Promise<void> {
 
-        const subject = "Email Verification";
+        const subject = "Verify Your Email";
         const html = `<br>
+                      <br>
+                      <br>
+                      <h1 style="text-align: center;">Hello ${auth.profile.firstName}. ${process.env.COMPANY_NAME ? "Welcome to " + process.env.COMPANY_NAME + "." : ""} </h1>
+                      <h3 style="text-align: center;color: #999">We are glad to see you.</h3>
                       <br>
                       <br>
                       <h3 style="text-align: center;">Click <a href='http://localhost:8080/api/auth/verify?auth=${auth.id}&token=${verifyToken.token}'>here</a> to verify your email.</h3>`;

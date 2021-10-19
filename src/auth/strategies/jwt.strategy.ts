@@ -18,13 +18,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
     // noinspection JSUnusedGlobalSymbols
     async validate(jwtPayload: any): Promise<{ auth: Auth }> {
-        const user = await this.authService.getSensitive({ id: jwtPayload.sub });
-        if (!user || typeof user === "number") {
-            if (user === HttpStatus.NOT_FOUND) {
+        const auth = await this.authService.getSensitive({ id: jwtPayload.sub });
+        if (!auth || typeof auth === "number") {
+            if (auth === HttpStatus.NOT_FOUND) {
                 throw new HttpException(AuthErrors.AUTH_401_INVALID_TOKEN, HttpStatus.UNAUTHORIZED);
             }
             throw new HttpException(AuthErrors.ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return { auth: user };
+        return { auth };
     }
 }

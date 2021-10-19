@@ -1,6 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, JoinColumn, OneToOne } from "typeorm";
 import { AuthType, StatusString } from "../enums/auth.enums";
-import { OmitType } from "@nestjs/mapped-types";
 import { User } from "../../market/user/entities/user.entity";
 
 @Entity()
@@ -24,9 +23,9 @@ export class Auth {
     @Column({ default: false })
     verified: boolean;
 
-    @ManyToOne(() => User, { nullable: true })
+    @OneToOne(() => User, { cascade: true, eager: true, onDelete: "CASCADE" })
     @JoinColumn()
-    profile: string;
+    profile!: User;
 
     @Column({ default: false })
     status: boolean;
@@ -51,8 +50,4 @@ export class Auth {
         onUpdate: "CURRENT_TIMESTAMP"
     })
     updatedAt: Date;
-
-    getUserDto(): Auth {
-        return OmitType(Auth, ["password", "salt", "getUserDto"]) as Partial<Auth> as Auth;
-    }
 }

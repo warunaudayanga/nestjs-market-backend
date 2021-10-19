@@ -11,7 +11,7 @@ export class CommonDto {
     status: boolean;
 
     @decorate(IsOptional())
-    @decorate(IsEnum(StatusString, toErrString(CommonErrors.COMMON_400_INVALID_STATUS_STRING)))
+    @decorate(IsEnum(Object.values(StatusString), toErrString(CommonErrors.COMMON_400_INVALID_STATUS_STRING)))
     statusString: StatusString;
 
 }

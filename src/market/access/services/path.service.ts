@@ -22,7 +22,7 @@ export class PathService {
 
     async create(createPathDto: PathDto): Promise<Path> {
         try {
-            return await this.pathRepository.save(createPathDto, undefined, this.req as ReqAuth);
+            return await this.pathRepository.saveAuth(createPathDto, this.req as ReqAuth);
         } catch (err: any) {
             if (err.code === "ER_DUP_ENTRY") {
                 throw new HttpException(PathErrors.PATH_409_EXIST_PATH, HttpStatus.CONFLICT);

@@ -22,16 +22,16 @@ export class AccessDto {
         }
     }
 
-    @IsNotEmpty(toErrString(AccessErrors.ACCESS_400_EMPTY_AUTH))
     @IsUUID(undefined, toErrString(AccessErrors.ACCESS_400_INVALID_AUTH))
+    @IsNotEmpty(toErrString(AccessErrors.ACCESS_400_EMPTY_AUTH))
     auth: string;
 
-    @IsNotEmpty(toErrString(AccessErrors.ACCESS_400_EMPTY_PATH))
     @IsUUID(undefined, toErrString(AccessErrors.ACCESS_400_INVALID_PATH))
+    @IsNotEmpty(toErrString(AccessErrors.ACCESS_400_EMPTY_PATH))
     path: string;
 
-    @IsNotEmpty(toErrString(AccessErrors.ACCESS_400_EMPTY_OPTIONS))
     @IsObject(toErrString(AccessErrors.ACCESS_400_INVALID_OPTIONS))
+    @IsNotEmpty(toErrString(AccessErrors.ACCESS_400_EMPTY_OPTIONS))
     options: Options
 
 }

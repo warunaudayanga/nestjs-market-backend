@@ -14,25 +14,29 @@ export class PathController {
 
     constructor(private pathService: PathService) { }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(AuthType.ADMIN)
     @Post("create")
     create(@Body() createPathDto: PathDto): Promise<Path> {
         return this.pathService.create(new PathDto(createPathDto));
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(AuthType.ADMIN)
     @Patch("update")
     update(@Query("id") id: string, @Body() updatePathDto: Partial<PathDto>): Promise<SuccessDto> {
         return this.pathService.update(id, new PathDto(updatePathDto) as Partial<PathDto>);
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(AuthType.ADMIN)
     @Patch("activate")
     activate(@Query("id") id: string): Promise<SuccessDto> {
         return this.pathService.activate(id);
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(AuthType.ADMIN)
     @Patch("deactivate")
     deactivate(@Query("id") id: string): Promise<SuccessDto> {
         return this.pathService.deactivate(id);
@@ -45,19 +49,21 @@ export class PathController {
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(AuthType.ADMIN)
     @Get("getOne")
     @Roles(AuthType.ADMIN)
     getOne(@Body("filter") filter: FindConditions<Path>): Promise<Path> {
         return this.pathService.getOne(filter);
     }
 
-    @UseGuards(JwtAuthGuard, RolesGuard)
+    @UseGuards(JwtAuthGuard)
     @Get("getAll")
     getAll(): Promise<Path[]> {
         return this.pathService.getAll();
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(AuthType.ADMIN)
     @Patch("delete")
     delete(@Query("id") id: string): Promise<SuccessDto> {
         return this.pathService.delete(id);

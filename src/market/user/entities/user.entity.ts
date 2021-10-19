@@ -1,4 +1,4 @@
-import { Entity, Column, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Entity, Column, JoinColumn, ManyToOne, PrimaryGeneratedColumn, CreateDateColumn } from "typeorm";
 import { Position } from "./position.entity";
 import { Gender } from "../enums/user.enums";
 
@@ -14,7 +14,7 @@ export class User {
     @Column()
     lastName: string;
 
-    @Column()
+    @Column({ default: "" })
     image?: string;
 
     @Column({
@@ -34,18 +34,15 @@ export class User {
 
     @ManyToOne(() => Position, { nullable: false })
     @JoinColumn()
-    position: Position;
+    position: Position | string;
 
-    @Column()
+    @Column({ default: "" })
     phone?: string;
 
-    @Column()
+    @Column({ default: "" })
     address?: string;
 
-    @Column({
-        type: "timestamp",
-        default: () => "CURRENT_TIMESTAMP"
-    })
-    regDate: Date;
+    @CreateDateColumn({ insert: false, update: false })
+    regDate?: Date;
 
 }

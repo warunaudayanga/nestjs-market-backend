@@ -12,5 +12,5 @@ export class Category extends CommonEntity {
     @Column({
         default: true
     })
-    desc?: boolean;
+    desc?: string;
 }

@@ -14,13 +14,15 @@ export class AccessController {
 
     constructor(private accessService: AccessService) { }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(AuthType.ADMIN)
     @Post("create")
     create(@Body() accessDto: AccessDto): Promise<Access> {
         return this.accessService.create(new AccessDto(accessDto));
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(AuthType.ADMIN)
     @Patch("update")
     update(@Query("id") id: string, @Body() accessDto: AccessDto): Promise<SuccessDto> {
         return this.accessService.update(id, new AccessDto(accessDto));
@@ -46,6 +48,7 @@ export class AccessController {
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(AuthType.ADMIN)
     @Patch("delete")
     delete(@Query("id") id: string): Promise<SuccessDto> {
         return this.accessService.delete(id);
