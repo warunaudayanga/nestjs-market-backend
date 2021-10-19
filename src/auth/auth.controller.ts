@@ -9,12 +9,12 @@ import { JwtAuthGuard } from "./guards/jwt-auth.guard";
 import { Roles } from "./decorators/roles.decorator";
 import { RolesGuard } from "./guards/roles.guard";
 import { AuthType } from "./enums/auth.enums";
-import { SuccessDto } from "./dto/success.dto";
+import { SuccessDto } from "../common/dto/success.dto";
 import { UserAuth } from "./decorators/auth.decorator";
 import { Auth } from "./entities/auth.entity";
 import { FindConditions } from "typeorm";
 
-@Controller("auth")
+@Controller({ path: "auth" })
 export class AuthController {
 
     constructor(private authService: AuthService) { }

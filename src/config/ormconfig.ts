@@ -5,7 +5,7 @@ export const dev: TypeOrmModuleOptions = {
     host: "localhost",
     port: 3306,
     username: "root",
-    password: "root",
+    password: "",
     database: "market-nest",
     entities: ["dist/**/*.entity{.ts,.js}"],
     synchronize: true

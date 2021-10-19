@@ -1,6 +1,5 @@
-import { Module } from "@nestjs/common";
+import { Global, Module } from "@nestjs/common";
 import { AuthService } from "./services/auth.service";
-import { CommonModule } from "../common/common.module";
 import { JwtModule } from "@nestjs/jwt";
 import { PassportModule } from "@nestjs/passport";
 import { JwtStrategy } from "./strategies/jwt.strategy";
@@ -10,17 +9,18 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { Auth } from "./entities/auth.entity";
 import { VerifyToken } from "./entities/verify-token.entity";
 
+@Global()
 @Module({
     imports: [
         TypeOrmModule.forFeature([Auth, VerifyToken]),
-        CommonModule,
-        PassportModule,
         JwtModule.register({
             privateKey: AuthService.getPrivateKey(),
-            signOptions: { expiresIn: 60 * 60 * 24 }
-        })
+            signOptions: { expiresIn: AuthService.EXPIRES_IN }
+        }),
+        PassportModule
     ],
     controllers: [AuthController],
-    providers: [AuthService, VerifyTokenService, JwtStrategy]
+    providers: [AuthService, VerifyTokenService, JwtStrategy],
+    exports: [AuthService, JwtModule]
 })
 export class AuthModule {}

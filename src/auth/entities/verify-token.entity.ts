@@ -7,11 +7,19 @@ export class VerifyToken {
     @PrimaryGeneratedColumn()
     id?: string;
 
-    @ManyToOne(() => Auth)
+    @ManyToOne(() => Auth, { nullable: false })
     @Column("char", { length: 36 })
     auth: string;
 
     @Column("text")
     token: string;
+
+    @Column({
+        type: "timestamp",
+        insert: false,
+        update: false,
+        default: () => "CURRENT_TIMESTAMP"
+    })
+    createdAt: Date;
 
 }

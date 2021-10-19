@@ -11,7 +11,7 @@ import { VerifyTokenService } from "./verify-token.service";
 import { EmailService } from "../../common/services/email.service";
 import { VerifyTokenDto } from "../dto/verify-token.dto";
 import { AuthType, StatusString } from "../enums/auth.enums";
-import { SuccessDto } from "../dto/success.dto";
+import { SuccessDto } from "../../common/dto/success.dto";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FindConditions, Repository } from "typeorm";
 import { Auth } from "../entities/auth.entity";
@@ -28,6 +28,8 @@ export class AuthService {
     private static PRV_KEY = readFileSync(join(AuthService.keyPath, "id_rsa_prv.pem"), "utf8");
 
     private static PUB_KEY = readFileSync(join(AuthService.keyPath, "id_rsa_pub.pem"), "utf8");
+
+    public static EXPIRES_IN = 60 * 60 * 24;
 
     constructor(
         @InjectRepository(Auth) private authRepository: Repository<Auth>,
@@ -65,7 +67,7 @@ export class AuthService {
         const auth = await this.create(authDto);
         const verifyToken = await this.verifyTokenService.create(auth, AuthService.generateRandomHash());
         await this.sendVerificationEmail(auth, verifyToken);
-        return new SuccessDto();
+        return new SuccessDto("User registered successfully. Check your email for the verification.");
     }
 
     async verify(verifyTokenDto: VerifyTokenDto): Promise<string> {
@@ -101,7 +103,7 @@ export class AuthService {
         const auth = await this.getOne({ email });
         const verifyToken = await this.verifyTokenService.create(auth, AuthService.generateRandomHash());
         await this.sendRecoveryEmail(auth, verifyToken);
-        return new SuccessDto();
+        return new SuccessDto("Password recovery email sent successfully.");
     }
 
     async verifyRecovery(verifyTokenDto: VerifyTokenDto): Promise<VerifyToken | string> {
@@ -134,7 +136,7 @@ export class AuthService {
         if (await this.verifyTokenService.check({ auth })) {
             await this.changePassword(auth, password);
             if (await this.verifyTokenService.delete(auth)) {
-                return new SuccessDto();
+                return new SuccessDto("Password changed successfully.");
             }
             return Promise.reject(new HttpException(AuthErrors.AUTH_500_UPDATE, HttpStatus.INTERNAL_SERVER_ERROR));
         }
@@ -199,7 +201,7 @@ export class AuthService {
         try {
             const updateResult = await this.authRepository.update(id, auth);
             if (Number(updateResult.affected) > 0) {
-                return new SuccessDto();
+                return new SuccessDto("User updated successfully.");
             }
             return Promise.reject(new HttpException(AuthErrors.AUTH_404_ID, HttpStatus.NOT_FOUND));
         } catch (err: any) {

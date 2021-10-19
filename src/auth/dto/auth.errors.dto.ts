@@ -1,14 +1,4 @@
 const AuthErrors = {
-    AUTH_400_EMPTY_FIRST_NAME: {
-        status: 400,
-        code: "AUTH_400_EMPTY_FIRST_NAME",
-        message: "User first name cannot be empty!"
-    },
-    AUTH_400_EMPTY_LAST_NAME: {
-        status: 400,
-        code: "AUTH_400_EMPTY_LAST_NAME",
-        message: "User last name cannot be empty!"
-    },
     AUTH_400_EMPTY_EMAIL: {
         status: 400,
         code: "AUTH_400_EMPTY_EMAIL",
@@ -24,20 +14,10 @@ const AuthErrors = {
         code: "AUTH_400_INVALID_EMAIL",
         message: "Invalid value for user email!"
     },
-    AUTH_400_INVALID_GENDER: {
-        status: 400,
-        code: "AUTH_400_INVALID_GENDER",
-        message: "Invalid value for user gender!"
-    },
     AUTH_400_INVALID_TYPE: {
         status: 400,
         code: "AUTH_400_INVALID_TYPE",
         message: "Invalid value for user type!"
-    },
-    AUTH_400_INVALID_DOB: {
-        status: 400,
-        code: "AUTH_400_INVALID_DOB",
-        message: "Invalid value for user dob!"
     },
     AUTH_400_INVALID_STATUS_STRING: {
         status: 400,

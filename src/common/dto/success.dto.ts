@@ -1,8 +1,8 @@
 export class SuccessDto {
 
-    constructor() {
+    constructor(message?: string) {
         this.status = true;
-        this.message = "success";
+        this.message = message || "success";
     }
 
     status: boolean;
