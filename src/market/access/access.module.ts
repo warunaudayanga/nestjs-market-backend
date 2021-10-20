@@ -8,7 +8,6 @@ import { Access } from "./entities/access.entity";
 import { Path } from "./entities/path.entity";
 import { PathRepository } from "./repositories/path.repository";
 import { AccessRepository } from "./repositories/access.repository";
-
 @Module({
     imports: [
         TypeOrmModule.forFeature([Access, AccessRepository, Path, PathRepository])

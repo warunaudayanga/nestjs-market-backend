@@ -1,11 +1,12 @@
-import { Entity, Column, ManyToOne, JoinColumn } from "typeorm";
+import { Entity, Column, ManyToOne, JoinColumn, Unique } from "typeorm";
 import { Product } from "../../product/entities/product.entity";
-import { CommonEntity } from "../../common/entities/common.entity";
+import { CommonEntity } from "../../../common/entity/entity";
 
 @Entity({ name: "stock" })
+@Unique(["product", "price"])
 export class Stock extends CommonEntity {
 
-    @ManyToOne(() => Product, { nullable: false })
+    @ManyToOne(() => Product, { eager: true, nullable: false })
     @JoinColumn()
     product: string;
 

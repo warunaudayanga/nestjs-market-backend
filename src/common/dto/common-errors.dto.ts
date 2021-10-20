@@ -1,4 +1,5 @@
 const CommonErrors = {
+
     COMMON_400_INVALID_STATUS: {
         status: 400,
         code: "COMMON_400_INVALID_STATUS",

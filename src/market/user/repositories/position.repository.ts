@@ -1,6 +1,6 @@
 import { EntityRepository } from "typeorm";
+import { CommonRepository } from "../../../common/entity/entity.repository";
 import { Position } from "../entities/position.entity";
-import { CommonRepository } from "../../common/repositories/common.repository";
 
 @EntityRepository(Position)
 export class PositionRepository extends CommonRepository<Position> {}

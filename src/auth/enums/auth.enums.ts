@@ -2,7 +2,6 @@
 
 export enum AuthType {
     ADMIN = "Admin",
-    VIP = "VIP",
     STANDARD = "STANDARD",
 }
 

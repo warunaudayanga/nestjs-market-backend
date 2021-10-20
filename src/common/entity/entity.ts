@@ -1,6 +1,6 @@
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { Auth } from "../../../auth/entities/auth.entity";
-import { StatusString } from "../enums/common.enums";
+import { Auth } from "../../auth/entities/auth.entity";
+import { StatusString } from "./entity.enums";
 
 @Entity({ synchronize: false })
 export class CommonEntity {

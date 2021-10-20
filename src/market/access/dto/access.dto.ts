@@ -3,35 +3,31 @@ import { IsNotEmpty, IsObject, IsUUID } from "class-validator";
 import { toErrString } from "../../../common/converters/error-message.converter";
 import { AccessErrors } from "./access.errors.dto";
 import { Access } from "../entities/access.entity";
-import { StatusString } from "../../common/enums/common.enums";
-import { CommonDto } from "../../common/dto/common.dto";
-import { mix } from "ts-mixer";
+import { CommonDto } from "../../../common/dto/common.dto";
+import { decorate, mix } from "ts-mixer";
 
 export interface AccessDto extends Access, CommonDto { }
 
 @mix(Access, CommonDto)
-export class AccessDto {
+export class AccessDto extends CommonDto {
 
     constructor(accessDto: Partial<AccessDto>) {
+        super(accessDto);
         this.auth = accessDto?.auth;
         this.path = accessDto?.path;
         this.options = accessDto?.options;
-        if (accessDto?.status !== undefined) {
-            this.status = accessDto?.status;
-            this.statusString = accessDto?.status ? StatusString.ACTIVE : StatusString.DEACTIVE;
-        }
     }
 
-    @IsUUID(undefined, toErrString(AccessErrors.ACCESS_400_INVALID_AUTH))
-    @IsNotEmpty(toErrString(AccessErrors.ACCESS_400_EMPTY_AUTH))
+    @decorate(IsUUID(undefined, toErrString(AccessErrors.ACCESS_400_INVALID_AUTH)))
+    @decorate(IsNotEmpty(toErrString(AccessErrors.ACCESS_400_EMPTY_AUTH)))
     auth: string;
 
-    @IsUUID(undefined, toErrString(AccessErrors.ACCESS_400_INVALID_PATH))
-    @IsNotEmpty(toErrString(AccessErrors.ACCESS_400_EMPTY_PATH))
+    @decorate(IsUUID(undefined, toErrString(AccessErrors.ACCESS_400_INVALID_PATH)))
+    @decorate(IsNotEmpty(toErrString(AccessErrors.ACCESS_400_EMPTY_PATH)))
     path: string;
 
-    @IsObject(toErrString(AccessErrors.ACCESS_400_INVALID_OPTIONS))
-    @IsNotEmpty(toErrString(AccessErrors.ACCESS_400_EMPTY_OPTIONS))
+    @decorate(IsObject(toErrString(AccessErrors.ACCESS_400_INVALID_OPTIONS)))
+    @decorate(IsNotEmpty(toErrString(AccessErrors.ACCESS_400_EMPTY_OPTIONS)))
     options: Options
 
 }

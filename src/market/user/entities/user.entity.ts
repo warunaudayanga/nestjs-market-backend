@@ -1,12 +1,16 @@
 import { Entity, Column, JoinColumn, ManyToOne, PrimaryGeneratedColumn, CreateDateColumn } from "typeorm";
 import { Position } from "./position.entity";
 import { Gender } from "../enums/user.enums";
+import { CommonEntity } from "../../../common/entity/entity";
+
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface User extends CommonEntity { }
 
 @Entity({ name: "users" })
 export class User {
 
     @PrimaryGeneratedColumn("uuid")
-    id: string;
+    id?: string;
 
     @Column()
     firstName: string;

@@ -3,20 +3,23 @@ import { toErrString } from "../../../common/converters/error-message.converter"
 import { UserErrors } from "./user.errors.dto";
 import { User } from "../entities/user.entity";
 import { Gender } from "../enums/user.enums";
+import { CommonDto } from "../../../common/dto/common.dto";
+import { CommonEntity } from "../../../common/entity/entity";
 
-export class UserDto extends User {
+export interface UserDto extends User, CommonEntity, CommonDto { }
 
-    constructor(pathDto?: Partial<UserDto>) {
-        super();
-        this.firstName = pathDto?.firstName;
-        this.lastName = pathDto?.lastName;
-        this.image = pathDto?.image;
-        this.nic = pathDto?.nic.toUpperCase();
-        this.dob = pathDto?.dob;
-        this.gender = pathDto?.gender;
-        this.position = pathDto?.position;
-        this.phone = pathDto?.phone;
-        this.address = pathDto?.address;
+export class UserDto {
+
+    constructor(userDto?: Partial<UserDto>) {
+        this.firstName = userDto?.firstName;
+        this.lastName = userDto?.lastName;
+        this.image = userDto?.image;
+        this.nic = userDto?.nic.toUpperCase();
+        this.dob = userDto?.dob;
+        this.gender = userDto?.gender;
+        this.position = userDto?.position;
+        this.phone = userDto?.phone;
+        this.address = userDto?.address;
     }
 
     @IsNotEmpty(toErrString(UserErrors.USER_400_EMPTY_FIRST_NAME))

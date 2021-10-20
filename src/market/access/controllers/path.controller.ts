@@ -1,7 +1,7 @@
-import { Controller, UseGuards, Post, Get, Patch, Body, Query, Scope } from "@nestjs/common";
+import { Controller, UseGuards, Post, Get, Patch, Body, Query, Scope, Delete } from "@nestjs/common";
 import { JwtAuthGuard } from "../../../auth/guards/jwt-auth.guard";
 import { RolesGuard } from "../../../auth/guards/roles.guard";
-import { SuccessDto } from "../../../common/dto/success.dto";
+import { SuccessDto } from "../../../common/entity/entity.success.dto";
 import { PathService } from "../services/path.service";
 import { PathDto } from "../dto/path.dto";
 import { Path } from "../entities/path.entity";
@@ -18,7 +18,7 @@ export class PathController {
     @Roles(AuthType.ADMIN)
     @Post("create")
     create(@Body() createPathDto: PathDto): Promise<Path> {
-        return this.pathService.create(new PathDto(createPathDto), undefined);
+        return this.pathService.create(new PathDto(createPathDto));
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)
@@ -64,7 +64,7 @@ export class PathController {
 
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles(AuthType.ADMIN)
-    @Patch("delete")
+    @Delete("delete")
     delete(@Query("id") id: string): Promise<SuccessDto> {
         return this.pathService.delete(id);
     }

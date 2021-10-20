@@ -1,5 +1,4 @@
 const UserErrors = {
-
     USER_400_EMPTY_ID: {
         status: 400,
         code: "USER_400_EMPTY_ID",
@@ -60,11 +59,10 @@ const UserErrors = {
         code: "USER_400_INVALID_USER_REFERRED",
         message: "Invalid value for user referred string!"
     },
-
-    USER_404_ID: {
+    USER_404_POSITION: {
         status: 404,
-        code: "USER_404_ID",
-        message: "Cannot find a user with given id!"
+        code: "USER_404_POSITION",
+        message: "Cannot find a user position with given id!"
     },
     USER_404_REFERRED_ID: {
         status: 404,
@@ -75,32 +73,6 @@ const UserErrors = {
         status: 409,
         code: "USER_409_EXIST_NIC",
         message: "User with given path nic exist!"
-    },
-    USER_500_CREATE: {
-        status: 500,
-        code: "USER_500_CREATE",
-        message: "Error occurred while creating user!"
-    },
-    USER_500_UPDATE: {
-        status: 500,
-        code: "USER_500_UPDATE",
-        message: "Error occurred while updating user!"
-    },
-    USER_500_RETRIEVE: {
-        status: 500,
-        code: "USER_500_RETRIEVE",
-        message: "Error occurred while retrieving user!"
-    },
-    USER_500_DELETE: {
-        status: 500,
-        code: "USER_500_DELETE",
-        message: "Error occurred while deleting user!"
-    },
-
-    ERROR: {
-        status: 500,
-        code: "ERROR",
-        message: "Internal Server Error!"
     }
 };
 

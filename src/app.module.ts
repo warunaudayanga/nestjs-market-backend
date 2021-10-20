@@ -11,6 +11,9 @@ import { CommonModule } from "./common/common.module";
 import { AuthModule } from "./auth/auth.module";
 import { AccessModule } from "./market/access/access.module";
 import { UserModule } from "./market/user/user.module";
+import { ProductModule } from "./market/product/product.module";
+import { StockModule } from "./market/stock/stock.module";
+import { DataModule } from "./market/data/data.module";
 
 @Module({
     imports: [
@@ -19,10 +22,13 @@ import { UserModule } from "./market/user/user.module";
             rootPath: join(__dirname, "../dist/public")
         }),
         TypeOrmModule.forRoot(process.env.NODE_ENV === "production" ? prod : dev),
-        AuthModule,
         CommonModule,
+        AuthModule,
+        DataModule,
+        UserModule,
         AccessModule,
-        UserModule
+        ProductModule,
+        StockModule
     ],
     controllers: [AppController],
     providers: [AppService]

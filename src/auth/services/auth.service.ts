@@ -11,7 +11,7 @@ import { VerifyTokenService } from "./verify-token.service";
 import { EmailService } from "../../common/services/email.service";
 import { VerifyTokenDto } from "../dto/verify-token.dto";
 import { AuthType, StatusString } from "../enums/auth.enums";
-import { SuccessDto } from "../../common/dto/success.dto";
+import { SuccessDto } from "../../common/entity/entity.success.dto";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FindConditions, Repository } from "typeorm";
 import { Auth } from "../entities/auth.entity";

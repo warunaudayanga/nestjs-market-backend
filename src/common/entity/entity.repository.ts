@@ -1,10 +1,10 @@
 import { DeepPartial, FindManyOptions, FindOneOptions, ObjectID, Repository, SaveOptions, UpdateResult } from "typeorm";
-import { FindConditions } from "typeorm/find-options/FindConditions";
-import { omit } from "../../../common/methods/omit";
 import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
+import { FindConditions } from "typeorm/find-options/FindConditions";
 import { Request } from "express";
-import { Auth } from "../../../auth/entities/auth.entity";
-import { CommonEntity } from "../entities/common.entity";
+import { Auth } from "../../auth/entities/auth.entity";
+import { CommonEntity } from "./entity";
+import { omit } from "./entity.methods";
 
 export type ReqAuth = Request & { user: { auth: Auth } }
 
@@ -36,13 +36,17 @@ export class CommonRepository<Entity> extends Repository<Entity> {
 
     find(options?: FindManyOptions): Promise<Entity[]> {
         const opts = options ? options : {};
-        opts.loadRelationIds = true;
+        if (opts.loadRelationIds === undefined) {
+            opts.loadRelationIds = true;
+        }
         return super.find(opts);
     }
 
     findOne(conditions?: string | number | Date | ObjectID | FindConditions<Entity>, options?: FindOneOptions<Entity>): Promise<Entity | undefined> {
         const opts = options ? options : {};
-        opts.loadRelationIds = true;
+        if (opts.loadRelationIds === undefined) {
+            opts.loadRelationIds = true;
+        }
         return super.findOne(conditions, opts);
     }
 }

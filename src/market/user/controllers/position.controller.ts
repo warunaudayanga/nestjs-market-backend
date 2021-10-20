@@ -1,7 +1,7 @@
-import { Controller, UseGuards, Post, Get, Patch, Body, Query, Scope } from "@nestjs/common";
+import { Controller, UseGuards, Post, Get, Patch, Body, Query, Scope, Delete } from "@nestjs/common";
 import { JwtAuthGuard } from "../../../auth/guards/jwt-auth.guard";
 import { RolesGuard } from "../../../auth/guards/roles.guard";
-import { SuccessDto } from "../../../common/dto/success.dto";
+import { SuccessDto } from "../../../common/entity/entity.success.dto";
 import { PositionService } from "../services/position.service";
 import { PositionDto } from "../dto/position.dto";
 import { Position } from "../entities/position.entity";
@@ -63,7 +63,7 @@ export class PositionController {
 
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles(AuthType.ADMIN)
-    @Patch("delete")
+    @Delete("delete")
     delete(@Query("id") id: string): Promise<SuccessDto> {
         return this.positionService.delete(id);
     }

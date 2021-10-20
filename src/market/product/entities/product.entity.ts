@@ -1,26 +1,27 @@
 import { Entity, Column, JoinColumn, ManyToOne } from "typeorm";
 import { Category } from "./category.entity";
-import { CommonEntity } from "../../common/entities/common.entity";
+import { CommonEntity } from "../../../common/entity/entity";
+import { Unit } from "../enums/product.enums";
 
 @Entity({ name: "products" })
 export class Product extends CommonEntity {
 
-    @Column()
-    productCode: string;
+    @Column({ unique: true, update: false })
+    code: number;
 
     @Column()
     name: string;
 
-    @Column()
-    desc: string;
+    @Column({ default: "" })
+    desc?: string;
 
-    @Column()
-    size: string;
+    @Column({ default: "" })
+    size?: string;
 
-    @ManyToOne(() => Category, { nullable: false })
+    @ManyToOne(() => Category, { eager: true, nullable: false })
     @JoinColumn()
-    category: string;
+    category!: Category | string;
 
-    @Column()
-    unit: string;
+    @Column({ type: "enum", enum: Unit, nullable: false })
+    unit: Unit;
 }

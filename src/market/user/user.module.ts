@@ -6,8 +6,8 @@ import { UserController } from "./controllers/user.controller";
 import { PositionController } from "./controllers/position.controller";
 import { PositionService } from "./services/position.service";
 import { Position } from "./entities/position.entity";
-import { PositionRepository } from "./repositories/position.repository";
 import { UserRepository } from "./repositories/user.repository";
+import { PositionRepository } from "./repositories/position.repository";
 
 @Module({
     imports: [

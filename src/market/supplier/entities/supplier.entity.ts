@@ -1,6 +1,6 @@
 import { Entity, Column } from "typeorm";
-import { Address } from "../../common/interfaces/common.interfaces";
-import { CommonEntity } from "../../common/entities/common.entity";
+import { Address } from "../../../common/interfaces/address.interfaces";
+import { CommonEntity } from "../../../common/entity/entity";
 
 @Entity({ name: "supplier" })
 export class Supplier extends CommonEntity {

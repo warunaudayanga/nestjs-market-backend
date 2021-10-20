@@ -29,48 +29,15 @@ const AccessErrors = {
         code: "ACCESS_400_EMPTY_OPTIONS",
         message: "Invalid value for access options!"
     },
-    ACCESS_401_NOT_ACTIVE: {
-        status: 401,
-        code: "ACCESS_401_NOT_ACTIVE",
-        message: "Access is not activated!"
-    },
-
-    ACCESS_404_ID: {
+    ACCESS_404_AUTH: {
         status: 404,
-        code: "ACCESS_404_ID",
-        message: "Cannot find a access with given id!"
+        code: "ACCESS_404_AUTH",
+        message: "Cannot find a auth with given id!"
     },
     ACCESS_404_PATH: {
         status: 404,
         code: "ACCESS_404_PATH",
         message: "Cannot find a access path with given id!"
-    },
-
-    ACCESS_500_CREATE: {
-        status: 500,
-        code: "ACCESS_500_CREATE",
-        message: "Error occurred while creating access!"
-    },
-    ACCESS_500_UPDATE: {
-        status: 500,
-        code: "ACCESS_500_UPDATE",
-        message: "Error occurred while updating access!"
-    },
-    ACCESS_500_DELETE: {
-        status: 500,
-        code: "ACCESS_500_DELETE",
-        message: "Error occurred while deleting access!"
-    },
-    ACCESS_500_RETRIEVE: {
-        status: 500,
-        code: "ACCESS_500_RETRIEVE",
-        message: "Error occurred while retrieving access(es)!"
-    },
-
-    ERROR: {
-        status: 500,
-        code: "ERROR",
-        message: "Internal Server Error!"
     }
 };
 

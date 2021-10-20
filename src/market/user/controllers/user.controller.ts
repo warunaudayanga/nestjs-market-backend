@@ -1,7 +1,7 @@
-import { Controller, UseGuards, Post, Get, Patch, Body, Query, Scope } from "@nestjs/common";
+import { Controller, UseGuards, Post, Get, Patch, Body, Query, Scope, Delete } from "@nestjs/common";
 import { JwtAuthGuard } from "../../../auth/guards/jwt-auth.guard";
 import { RolesGuard } from "../../../auth/guards/roles.guard";
-import { SuccessDto } from "../../../common/dto/success.dto";
+import { SuccessDto } from "../../../common/entity/entity.success.dto";
 import { UserService } from "../services/user.service";
 import { UserDto } from "../dto/user.dto";
 import { User } from "../entities/user.entity";
@@ -18,7 +18,7 @@ export class UserController {
     @Roles(AuthType.ADMIN)
     @Post("create")
     create(@Body() createUserDto: UserDto): Promise<User> {
-        return this.userService.create(new UserDto(createUserDto));
+        return this.userService.createAlt(new UserDto(createUserDto));
     }
 
     @UseGuards(JwtAuthGuard)
@@ -48,7 +48,7 @@ export class UserController {
 
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles(AuthType.ADMIN)
-    @Patch("delete")
+    @Delete("delete")
     delete(@Query("id") id: string): Promise<SuccessDto> {
         return this.userService.delete(id);
     }
