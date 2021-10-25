@@ -5,6 +5,18 @@ import { StatusString } from "./entity.enums";
 @Entity({ synchronize: false })
 export class CommonEntity {
 
+    constructor(dto?: Partial<CommonEntity>) {
+        this.id = dto?.id;
+        if (dto?.status !== undefined) {
+            this.status = dto.status;
+            this.statusString = dto.status ? StatusString.ACTIVE : StatusString.DEACTIVE;
+        }
+        this.createdBy = dto?.createdBy;
+        this.createdAt = dto?.createdAt;
+        this.updatedBy = dto?.updatedBy;
+        this.updatedAt = dto?.updatedAt;
+    }
+
     @PrimaryGeneratedColumn("uuid")
     id?: string;
 

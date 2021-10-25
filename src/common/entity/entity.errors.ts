@@ -4,7 +4,9 @@ import { applyName } from "./entity.methods";
 export enum Err {
     // noinspection JSUnusedGlobalSymbols
     E_400_EMPTY_ID = "E_400_EMPTY_ID",
+    E_404_K = "E_404_K",
     E_404_ID = "E_404_ID",
+    E_404_CONDITION = "E_404_CONDITION",
     E_405 = "E_405",
     E_409_EXIST = "E_409_EXIST",
     E_500_CREATE = "E_500_CREATE",
@@ -22,10 +24,20 @@ export class Errors {
             code: "{{upperCase}}_400_EMPTY_ID",
             message: "{{firstCase}} id cannot be empty!"
         },
+        E_404_K: {
+            status: 404,
+            code: "{{upperCase}}_404_{{upperConflict}}",
+            message: "Cannot find a {{lowerCase}} with given {{conflict}}!"
+        },
         E_404_ID: {
             status: 404,
             code: "{{upperCase}}_404_ID",
             message: "Cannot find a {{lowerCase}} with given id!"
+        },
+        E_404_CONDITION: {
+            status: 404,
+            code: "{{upperCase}}_404_CONDITION",
+            message: "Cannot find a {{lowerCase}}(s) with given condition!"
         },
         E_405: {
             status: 404,

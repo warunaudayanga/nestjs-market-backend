@@ -29,29 +29,21 @@ export class ProductService extends Service<Product> {
         protected logger: LoggerService,
         protected dataService: DataService
     ) {
-        super(["product", "code"], productRepository, req, logger, dataService);
+        super(["product"], productRepository, req, logger, dataService);
     }
 
-    async create(entity: DeepPartial<Product> & CommonEntity): Promise<Product> {
-        const code = await this.createCode();
+    async create<T extends DeepPartial<Product> & DeepPartial<CommonEntity>>(entity: T): Promise<T> {
+        const code = await this.createCode("productCode");
         entity.code = code;
-        let product = await super.create(entity, this.writeErrorHandler);
-        if (product && await this.saveCode(code)) {
+        let product = await super.create(entity, undefined, this.writeErrorHandler);
+        if (product && await this.saveCode("productCode", code)) {
             return product;
         }
-        throw new HttpException(this.errors.get(Err.E_500_CREATE), HttpStatus.INTERNAL_SERVER_ERROR);
+        throw this.gerError(Err.E_500_CREATE);
     }
 
     update(id: string, partialEntity: QueryDeepPartialEntity<Product> & Partial<CommonEntity>): Promise<SuccessDto> {
         return super.update(id, partialEntity, this.writeErrorHandler);
-    }
-
-    get(id: string): Promise<Product> {
-        return super.get(id, { loadRelationIds: false });
-    }
-
-    getAll(): Promise<Product[]> {
-        return super.getAll({ loadRelationIds: false });
     }
 
 }

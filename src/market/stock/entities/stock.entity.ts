@@ -6,13 +6,13 @@ import { CommonEntity } from "../../../common/entity/entity";
 @Unique(["product", "price"])
 export class Stock extends CommonEntity {
 
-    @ManyToOne(() => Product, { eager: true, nullable: false })
+    @ManyToOne(() => Product, { eager: true })
     @JoinColumn()
-    product: string;
+    product: Product | string;
 
-    @Column("decimal")
+    @Column("decimal", { unsigned: true })
     price: number;
 
-    @Column("float")
+    @Column("float", { unsigned: true })
     qty: number;
 }

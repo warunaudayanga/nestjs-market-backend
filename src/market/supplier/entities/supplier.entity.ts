@@ -2,11 +2,11 @@ import { Entity, Column } from "typeorm";
 import { Address } from "../../../common/interfaces/address.interfaces";
 import { CommonEntity } from "../../../common/entity/entity";
 
-@Entity({ name: "supplier" })
+@Entity({ name: "suppliers" })
 export class Supplier extends CommonEntity {
 
-    @Column()
-    supplierCode: string;
+    @Column({ unique: true, update: false })
+    code: number;
 
     @Column()
     name: string;

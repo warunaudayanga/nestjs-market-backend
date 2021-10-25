@@ -29,6 +29,11 @@ const StockErrors = {
         code: "STOCK_400_INVALID_QTY",
         message: "Invalid value for stock qty!"
     },
+    STOCK_400_OUT_OF_RANGE_QTY: {
+        status: 400,
+        code: "STOCK_400_OUT_OF_RANGE_QTY",
+        message: "Stock qty value is out of range.!"
+    },
     STOCK_404_PRODUCT: {
         status: 404,
         code: "STOCK_404_PRODUCT",
@@ -38,6 +43,11 @@ const StockErrors = {
         status: 409,
         code: "STOCK_409_EXIST_PRODUCT_AND_PRICE",
         message: "Stock item with given product and price already exist!"
+    },
+    STOCK_500_ADD: {
+        status: 409,
+        code: "STOCK_500_ADD",
+        message: "Error occurred while adding product to stock!"
     }
 };
 

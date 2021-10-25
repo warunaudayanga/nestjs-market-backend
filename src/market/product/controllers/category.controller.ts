@@ -51,7 +51,6 @@ export class CategoryController {
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles(AuthType.ADMIN)
     @Get("getOne")
-    @Roles(AuthType.ADMIN)
     getOne(@Body("filter") filter: FindConditions<Category>): Promise<Category> {
         return this.categoryService.getOne(filter);
     }

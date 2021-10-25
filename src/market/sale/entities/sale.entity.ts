@@ -1,26 +1,25 @@
 import { Entity, Column, ManyToOne, JoinColumn } from "typeorm";
-import { Product } from "../../product/entities/product.entity";
 import { CommonEntity } from "../../../common/entity/entity";
+import { Stock } from "../../stock/entities/stock.entity";
+import { SaleStockDto } from "../dto/sale-stock.dto";
 
-@Entity({ name: "sale" })
+@Entity({ name: "sales" })
 export class Sale extends CommonEntity {
 
+    constructor(code: number, saleStockDto: SaleStockDto) {
+        super({ status: true });
+        this.code = code;
+        this.stock = saleStockDto?.stock;
+        this.qty = saleStockDto?.qty;
+    }
+
     @Column()
-    saleCode: string;
+    code: number;
 
-    @ManyToOne(() => Product, { nullable: false })
+    @ManyToOne(() => Stock, { eager: true })
     @JoinColumn()
-    product: string;
+    stock: Stock | string;
 
-    @Column("decimal")
-    price: number;
-
-    @Column("float")
+    @Column("float", { unsigned: true })
     qty: number;
-
-    @Column({
-        type: "timestamp",
-        default: () => "CURRENT_TIMESTAMP"
-    })
-    time: Date;
 }

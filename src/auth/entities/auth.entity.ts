@@ -25,7 +25,7 @@ export class Auth {
 
     @OneToOne(() => User, { cascade: true, eager: true, onDelete: "CASCADE" })
     @JoinColumn()
-    profile!: User;
+    profile: User;
 
     @Column({ default: false })
     status: boolean;

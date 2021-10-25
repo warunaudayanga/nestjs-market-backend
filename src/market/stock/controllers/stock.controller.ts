@@ -28,24 +28,22 @@ export class StockController {
         return this.stockService.update(id, new StockDto(stockDto));
     }
 
-    @UseGuards(JwtAuthGuard, RolesGuard)
-    @Roles(AuthType.ADMIN)
-    @Patch("activate")
-    activate(@Query("id") id: string): Promise<SuccessDto> {
-        return this.stockService.activate(id);
+    @UseGuards(JwtAuthGuard)
+    @Patch("increase")
+    increase(@Query("id") id: string, @Query("qty") qty: number): Promise<SuccessDto> {
+        return this.stockService.increase(id, qty);
     }
 
-    @UseGuards(JwtAuthGuard, RolesGuard)
-    @Roles(AuthType.ADMIN)
-    @Patch("deactivate")
-    deactivate(@Query("id") id: string): Promise<SuccessDto> {
-        return this.stockService.deactivate(id);
+    @UseGuards(JwtAuthGuard)
+    @Patch("decrease")
+    decrease(@Query("id") id: string, @Query("qty") qty: number): Promise<SuccessDto> {
+        return this.stockService.decrease(id, qty);
     }
 
     @UseGuards(JwtAuthGuard)
     @Get("get")
-    get(@Query("id") id: string): Promise<Stock> {
-        return this.stockService.get(id);
+    get(@Query("id") id: string, @Query("eager") eager?: boolean): Promise<Stock> {
+        return this.stockService.get(id, { loadRelationIds: !eager });
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)
@@ -57,8 +55,8 @@ export class StockController {
 
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Get("getAll")
-    getAll(): Promise<Stock[]> {
-        return this.stockService.getAll();
+    getAll(@Query("eager") eager?: boolean): Promise<Stock[]> {
+        return this.stockService.getAll({ loadRelationIds: !eager });
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)

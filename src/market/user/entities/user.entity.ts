@@ -36,7 +36,7 @@ export class User {
     })
     gender: Gender;
 
-    @ManyToOne(() => Position, { nullable: false })
+    @ManyToOne(() => Position, { eager: true })
     @JoinColumn()
     position: Position | string;
 

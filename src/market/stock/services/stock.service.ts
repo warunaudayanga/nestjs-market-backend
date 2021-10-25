@@ -11,17 +11,27 @@ import { StockErrors } from "../dto/stock.errors.dto";
 import { StockRepository } from "../repositories/stock.repository";
 import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
 import { SuccessDto } from "../../../common/entity/entity.success.dto";
+import { Purchase } from "../../purchase/entities/purchase.entity";
+import { Err } from "../../../common/entity/entity.errors";
 
 @Injectable({ scope: Scope.REQUEST })
 export class StockService extends Service<Stock> {
 
     private writeErrorHandler = (err) : Error | void => {
         if (err.errno === 1452) {
-            if (err.sqlMessage?.match(/(REFERENCES `auth`)/)) {
+            if (err.sqlMessage?.match(/(REFERENCES `products`)/)) {
                 return new HttpException(StockErrors.STOCK_404_PRODUCT, HttpStatus.NOT_FOUND);
             }
         } else if (err.errno === 1062) {
             return new HttpException(StockErrors.STOCK_409_EXIST_PRODUCT_AND_PRICE, HttpStatus.CONFLICT);
+        }
+    }
+
+    public static qtyErrorHandler = (err) : Error | void => {
+        if (err.errno === 1264) {
+            if (err.sqlMessage?.match(/(column 'qty')/)) {
+                return new HttpException(StockErrors.STOCK_400_OUT_OF_RANGE_QTY, HttpStatus.NOT_FOUND);
+            }
         }
     }
 
@@ -33,20 +43,37 @@ export class StockService extends Service<Stock> {
         super(["stock"], stockRepository, req, logger);
     }
 
-    create(entity: DeepPartial<Stock> & CommonEntity): Promise<Stock> {
-        return super.create(entity, this.writeErrorHandler);
+    create<T extends DeepPartial<Stock & CommonEntity>>(stock: T): Promise<T> {
+        return super.create(stock, undefined, this.writeErrorHandler);
     }
 
     update(id: string, partialEntity: QueryDeepPartialEntity<Stock> & Partial<CommonEntity>): Promise<SuccessDto> {
         return super.update(id, partialEntity, this.writeErrorHandler);
     }
 
-    get(id: string): Promise<Stock> {
-        return super.get(id, { loadRelationIds: false });
+    increase(id: string, qty: number): Promise<SuccessDto> {
+        return super.increment({ id }, "qty", qty);
     }
 
-    getAll(): Promise<Stock[]> {
-        return super.getAll({ loadRelationIds: false });
+    decrease(id: string, qty: number): Promise<SuccessDto> {
+        return super.decrement({ id }, "qty", qty, StockService.qtyErrorHandler);
+    }
+
+    async check(product: string, price: number): Promise<boolean> {
+        return await super.count({ product, price }) > 0;
+    }
+
+    async add(purchase: Purchase): Promise<void> {
+        const product = typeof purchase.product === "string" ? purchase.product : purchase.product.id;
+        try {
+            await super.increment({ product, price: purchase.salePrice }, "qty", purchase.qty);
+        } catch (err: any) {
+            try {
+                await this.create({ product, price: purchase.salePrice, qty: purchase.qty });
+            } catch (err: any) {
+                throw this.gerError(Err.E_500_UPDATE);
+            }
+        }
     }
 
 }

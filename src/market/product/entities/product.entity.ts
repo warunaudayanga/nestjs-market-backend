@@ -18,10 +18,10 @@ export class Product extends CommonEntity {
     @Column({ default: "" })
     size?: string;
 
-    @ManyToOne(() => Category, { eager: true, nullable: false })
+    @ManyToOne(() => Category, { eager: true })
     @JoinColumn()
-    category!: Category | string;
+    category: Category | string;
 
-    @Column({ type: "enum", enum: Unit, nullable: false })
+    @Column({ type: "enum", enum: Unit })
     unit: Unit;
 }

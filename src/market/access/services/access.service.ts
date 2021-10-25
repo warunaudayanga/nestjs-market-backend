@@ -5,7 +5,7 @@ import { LoggerService } from "../../../common/services/logger.service";
 import { REQUEST } from "@nestjs/core";
 import { Request } from "express";
 import { Service } from "../../../common/entity/entity.service";
-import { DeepPartial } from "typeorm";
+import { DeepPartial, SaveOptions } from "typeorm";
 import { CommonEntity } from "../../../common/entity/entity";
 import { AccessErrors } from "../dto/access.errors.dto";
 import { AccessRepository } from "../repositories/access.repository";
@@ -33,8 +33,8 @@ export class AccessService extends Service<Access> {
         super(["access"], accessRepository, req, logger);
     }
 
-    create(entity: DeepPartial<Access> & CommonEntity): Promise<Access> {
-        return super.create(entity, this.writeErrorHandler);
+    create<T extends DeepPartial<Access> & DeepPartial<CommonEntity>>(entity: T, options?: SaveOptions): Promise<T> {
+        return super.create(entity, options, this.writeErrorHandler);
     }
 
     update(id: string, partialEntity: QueryDeepPartialEntity<Access> & Partial<CommonEntity>): Promise<SuccessDto> {

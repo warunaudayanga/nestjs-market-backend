@@ -7,12 +7,12 @@ import { CommonEntity } from "../../../common/entity/entity";
 @Entity({ name: "access" })
 export class Access extends CommonEntity {
 
-    @ManyToOne(() => Auth, { nullable: false })
+    @ManyToOne(() => Auth)
     @JoinColumn()
     auth: string;
 
-    @ManyToOne(() => Path, { nullable: false })
-    path: string;
+    @ManyToOne(() => Path, { eager: true })
+    path: Path | string;
 
     @Column("simple-json")
     options: Options;

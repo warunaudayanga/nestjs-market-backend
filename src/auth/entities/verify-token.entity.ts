@@ -7,7 +7,7 @@ export class VerifyToken {
     @PrimaryGeneratedColumn()
     id?: string;
 
-    @ManyToOne(() => Auth, { nullable: false })
+    @ManyToOne(() => Auth)
     @Column("char", { length: 36 })
     auth: string;
 

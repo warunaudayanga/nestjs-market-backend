@@ -44,22 +44,21 @@ export class ProductController {
 
     @UseGuards(JwtAuthGuard)
     @Get("get")
-    get(@Query("id") id: string): Promise<Product> {
-        return this.productService.get(id);
+    get(@Query("id") id: string, @Query("eager") eager?: boolean): Promise<Product> {
+        return this.productService.get(id, { loadRelationIds: !eager });
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles(AuthType.ADMIN)
     @Get("getOne")
-    @Roles(AuthType.ADMIN)
     getOne(@Body("filter") filter: FindConditions<Product>): Promise<Product> {
         return this.productService.getOne(filter);
     }
 
     @UseGuards(JwtAuthGuard)
     @Get("getAll")
-    getAll(): Promise<Product[]> {
-        return this.productService.getAll();
+    getAll(@Query("eager") eager?: boolean): Promise<Product[]> {
+        return this.productService.getAll({ loadRelationIds: !eager });
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)

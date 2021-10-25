@@ -1,7 +1,9 @@
 const omit = (obj, keys?: string[]): void => {
-    Object.keys(obj).forEach(key => {
-        return (obj[key] === undefined || keys?.includes(key)) && delete obj[key];
-    });
+    if (obj) {
+        Object.keys(obj).forEach(key => {
+            return (obj[key] === undefined || keys?.includes(key)) && delete obj[key];
+        });
+    }
 };
 
 const toFirstCase = (str: string): string => {
@@ -16,7 +18,8 @@ const applyName = (str: string, entityData: string[]): string => {
         .replace("{{upperCase}}", name.toUpperCase())
         .replace("{{firstCase}}", toFirstCase(name))
         .replace("{{lowerCase}}", name.toLowerCase())
-        .replace("{{conflict}}", conflict ? conflict.toLowerCase() : "unique field");
+        .replace("{{conflict}}", conflict ? conflict.toLowerCase() : "unique field")
+        .replace("{{upperConflict}}", conflict ? conflict.toUpperCase() : "UNIQUE");
 };
 
 export { omit, toFirstCase, applyName };

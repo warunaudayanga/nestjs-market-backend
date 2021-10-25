@@ -10,6 +10,7 @@ import { UserRepository } from "../repositories/user.repository";
 import { UserErrors } from "../dto/user.errors.dto";
 import { DeepPartial } from "typeorm";
 import { Err } from "../../../common/entity/entity.errors";
+import { CommonEntity } from "../../../common/entity/entity";
 
 @Injectable({ scope: Scope.REQUEST })
 export class UserService extends Service<User>{
@@ -28,12 +29,12 @@ export class UserService extends Service<User>{
         super(["user", "nic"], userRepository, req, logger);
     }
 
-    create(): Promise<User> {
+    create<T extends DeepPartial<User> & DeepPartial<CommonEntity>>(): Promise<T> {
         throw this.gerError(Err.E_405);
     }
 
-    createAlt(entity: DeepPartial<User>): Promise<User> {
-        return super.createAlt(entity, this.writeErrorHandler);
+    createAlt<T extends DeepPartial<User>>(entity: T): Promise<T> {
+        return super.createAlt(entity, undefined, this.writeErrorHandler);
     }
 
     changeStatus(): Promise<SuccessDto> {

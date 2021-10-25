@@ -1,4 +1,4 @@
-import { DeepPartial, FindManyOptions, FindOneOptions, ObjectID, Repository, SaveOptions, UpdateResult } from "typeorm";
+import { DeepPartial, FindManyOptions, FindOneOptions, ObjectID, QueryRunner, Repository, SaveOptions, UpdateResult } from "typeorm";
 import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
 import { FindConditions } from "typeorm/find-options/FindConditions";
 import { Request } from "express";
@@ -10,34 +10,82 @@ export type ReqAuth = Request & { user: { auth: Auth } }
 
 export class CommonRepository<Entity> extends Repository<Entity> {
 
-    saveAuth<T extends DeepPartial<Entity> & CommonEntity>(entity: T, req: ReqAuth): Promise<T & Entity> {
+    constructor(private EntityTarget, public queryRunner: QueryRunner) {
+        super();
+    }
+
+    isTransactional(): boolean {
+        return this.queryRunner.isTransactionActive;
+    }
+
+    saveAuth<T extends DeepPartial<Entity> & DeepPartial<CommonEntity>>(entity: T, req: ReqAuth, options?: SaveOptions): Promise<T> {
         omit(entity);
         entity.createdBy = req.user.auth.id;
         entity.updatedBy = null;
-        return super.save(entity);
+        if (this.isTransactional()) {
+            return this.queryRunner.manager.save(entity, options);
+        }
+        return super.save(entity, options);
     }
 
-    saveAlt<T extends DeepPartial<Entity>>(entity: T, options?: SaveOptions): Promise<T & Entity> {
+    saveAlt<T extends DeepPartial<Entity>>(entity: T, options?: SaveOptions): Promise<T> {
         omit(entity);
+        if (this.isTransactional()) {
+            return this.queryRunner.manager.save(entity, options);
+        }
         return super.save(entity, options);
+    }
+
+    async saveBulk<T extends DeepPartial<Entity> & DeepPartial<CommonEntity>>(entities: T[], req: ReqAuth, options?: SaveOptions): Promise<T[]> {
+        entities.forEach(entity => {
+            omit(entity);
+            entity.createdBy = req.user.auth.id;
+            entity.updatedBy = null;
+        });
+        if (this.isTransactional()) {
+            return await this.queryRunner.manager.save(entities, options);
+        }
+        return super.save(entities, options);
+    }
+
+    // noinspection JSUnusedGlobalSymbols
+    saveBulkAlt<T extends DeepPartial<Entity>>(entities: T[], options?: SaveOptions): Promise<T[]> {
+        entities.forEach(entity => omit(entity));
+        if (this.isTransactional()) {
+            return this.queryRunner.manager.save(entities, options);
+        }
+        return super.save(entities, options);
     }
 
     update(
         criteria: string | string[] | number | number[] | Date | Date[] | ObjectID | ObjectID[] | FindConditions<Entity>,
-        partialEntity: QueryDeepPartialEntity<Entity> & Partial<CommonEntity>,
+        partialEntity: QueryDeepPartialEntity<Entity> & DeepPartial<CommonEntity>,
         req?: ReqAuth
     ): Promise<UpdateResult> {
         omit(partialEntity);
         if (req) {
             partialEntity.updatedBy = req.user.auth.id;
         }
+        if (this.isTransactional()) {
+            return this.queryRunner.manager.update(this.EntityTarget, criteria, partialEntity);
+        }
         return super.update(criteria, partialEntity);
     }
 
-    find(options?: FindManyOptions): Promise<Entity[]> {
+    decrement(conditions: FindConditions<Entity>, propertyPath: string, value: number | string): Promise<UpdateResult> {
+        if (this.isTransactional()) {
+            return this.queryRunner.manager.decrement(this.EntityTarget, conditions, propertyPath, value);
+        }
+        return super.decrement(conditions, propertyPath, value);
+    }
+
+    find(options?: FindManyOptions<Entity>): Promise<Entity[]> {
         const opts = options ? options : {};
         if (opts.loadRelationIds === undefined) {
             opts.loadRelationIds = true;
+        }
+        if (this.isTransactional()) {
+            return this.queryRunner.manager.find(this.EntityTarget, opts);
         }
         return super.find(opts);
     }
@@ -46,6 +94,9 @@ export class CommonRepository<Entity> extends Repository<Entity> {
         const opts = options ? options : {};
         if (opts.loadRelationIds === undefined) {
             opts.loadRelationIds = true;
+        }
+        if (this.isTransactional()) {
+            return this.queryRunner.manager.findOne(this.EntityTarget, options);
         }
         return super.findOne(conditions, opts);
     }

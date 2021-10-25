@@ -14,6 +14,9 @@ import { UserModule } from "./market/user/user.module";
 import { ProductModule } from "./market/product/product.module";
 import { StockModule } from "./market/stock/stock.module";
 import { DataModule } from "./market/data/data.module";
+import { PurchaseModule } from "./market/purchase/purchase.module";
+import { SupplierModule } from "./market/supplier/supplier.module";
+import { SaleModule } from "./market/sale/sale.module";
 
 @Module({
     imports: [
@@ -28,7 +31,10 @@ import { DataModule } from "./market/data/data.module";
         UserModule,
         AccessModule,
         ProductModule,
-        StockModule
+        SupplierModule,
+        PurchaseModule,
+        StockModule,
+        SaleModule
     ],
     controllers: [AppController],
     providers: [AppService]

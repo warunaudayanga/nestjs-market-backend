@@ -1,5 +1,9 @@
-import { EntityRepository } from "typeorm";
+import { EntityRepository, getConnection } from "typeorm";
 import { CommonRepository } from "../../../common/entity/entity.repository";
 import { Stock } from "../entities/stock.entity";
 
-@EntityRepository(Stock) export class StockRepository extends CommonRepository<Stock> {}
+@EntityRepository(Stock) export class StockRepository extends CommonRepository<Stock> {
+    constructor() {
+        super(Stock, getConnection().createQueryRunner());
+    }
+}

@@ -51,7 +51,6 @@ export class PathController {
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles(AuthType.ADMIN)
     @Get("getOne")
-    @Roles(AuthType.ADMIN)
     getOne(@Body("filter") filter: FindConditions<Path>): Promise<Path> {
         return this.pathService.getOne(filter);
     }
