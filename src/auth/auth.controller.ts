@@ -13,8 +13,6 @@ import { SuccessDto } from "../common/entity/entity.success.dto";
 import { UserAuth } from "./decorators/auth.decorator";
 import { Auth } from "./entities/auth.entity";
 import { FindConditions } from "typeorm";
-import { existsSync } from "fs";
-import * as path from "path";
 
 @Controller({ path: "auth", scope: Scope.REQUEST })
 export class AuthController {
@@ -123,16 +121,6 @@ export class AuthController {
     @Delete("hardDelete")
     hardDelete(@Query("user_id") user_id: string): Promise<SuccessDto> {
         return this.authService.hardDelete(user_id);
-    }
-
-    @Get("errors")
-    getErrorFile(@Res() res: Response): void {
-        const filename = process.env.LOG_FILE;
-        if (existsSync(`${filename}.json`)) {
-            res.sendFile(path.join(__dirname + `../../${filename}.json`));
-        } else {
-            res.status(404).send("No error file found on server!");
-        }
     }
 
 }

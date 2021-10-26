@@ -2,7 +2,7 @@
 // noinspection JSUnusedLocalSymbols,JSUnusedGlobalSymbols
 
 import { readFileSync, writeFileSync } from "fs";
-import { LoggerService as NestLogger, LogLevel } from "@nestjs/common";
+import { LoggerService as NestLogger } from "@nestjs/common";
 import { Logger, ILogObject } from "tslog";
 
 export class LoggerService implements NestLogger {
@@ -52,7 +52,7 @@ export class LoggerService implements NestLogger {
     }
 
     private static logToTransport(logObject: ILogObject): void {
-        if (logObject.logLevelId > 2) {
+        if (logObject.logLevelId > 4) {
 
             let logFileArray: Array<any>;
             const filename = process.env.LOG_FILE;
@@ -122,7 +122,7 @@ export class LoggerService implements NestLogger {
         this.logger.fatal(message, ...optionalParams);
     }
 
-    setLogLevels?(levels: LogLevel[]): void {
-        throw new Error("Method not implemented.");
-    }
+    // setLogLevels?(levels: LogLevel[]): void {
+    //     throw new Error("Method not implemented.");
+    // }
 }
