@@ -2,7 +2,7 @@
 
 export enum AuthType {
     ADMIN = "Admin",
-    STANDARD = "STANDARD",
+    STANDARD = "Standard",
 }
 
 export enum StatusString {
