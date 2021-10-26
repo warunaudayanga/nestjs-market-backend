@@ -19,5 +19,5 @@ export const prod: TypeOrmModuleOptions = {
     password: "hph42p3squlpt4tv",
     database: "ggmaaa1v7znur9qc",
     entities: ["dist/**/*.entity{.ts,.js}"],
-    synchronize: false
+    synchronize: true
 };
