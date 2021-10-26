@@ -15,6 +15,7 @@ import { SuccessDto } from "../../../common/entity/entity.success.dto";
 import { PurchaseInvoiceDto } from "../dto/purchase-invoice.dto";
 import { PurchaseProductDto } from "../dto/purchase-product.dto";
 import { Stock } from "../../stock/entities/stock.entity";
+import { returnError } from "../../../common/methods/errors";
 
 @Injectable({ scope: Scope.REQUEST })
 export class PurchaseService extends Service<Purchase> {
@@ -68,6 +69,9 @@ export class PurchaseService extends Service<Purchase> {
         } catch (err: any) {
             await this.rollbackTransaction();
             this.logger.error(err);
+            if (returnError()) {
+                throw err;
+            }
             throw this.gerError(Err.E_500_CREATE);
         }
     }

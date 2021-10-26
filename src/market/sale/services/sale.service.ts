@@ -16,6 +16,7 @@ import { SaleInvoiceDto } from "../dto/sale-invoice.dto";
 import { SaleStockDto } from "../dto/sale-stock.dto";
 import { StockService } from "../../stock/services/stock.service";
 import { Stock } from "../../stock/entities/stock.entity";
+import { returnError } from "../../../common/methods/errors";
 
 @Injectable({ scope: Scope.REQUEST })
 export class SaleService extends Service<Sale> {
@@ -66,6 +67,9 @@ export class SaleService extends Service<Sale> {
                 throw e;
             }
             this.logger.error(err);
+            if (returnError()) {
+                throw err;
+            }
             throw this.gerError(Err.E_500_CREATE);
         }
     }

@@ -20,6 +20,7 @@ import { CreateAuthDto } from "../dto/create-auth.dto";
 import { CryptAuthDto } from "../dto/crypt-auth.dto";
 import { AuthDto } from "../dto/auth.dto";
 import { UserErrors } from "../../market/user/dto/user.errors.dto";
+import { returnError } from "src/common/methods/errors";
 
 @Injectable()
 export class AuthService {
@@ -199,6 +200,9 @@ export class AuthService {
                 throw new HttpException(AuthErrors.AUTH_409_EXIST_EMAIL, HttpStatus.CONFLICT);
             }
             this.logger.error(err);
+            if (returnError()) {
+                throw err;
+            }
             throw new HttpException(AuthErrors.AUTH_500_CREATE, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -215,6 +219,9 @@ export class AuthService {
                 throw new HttpException(AuthErrors.AUTH_409_EXIST_EMAIL, HttpStatus.CONFLICT);
             }
             this.logger.error(err);
+            if (returnError()) {
+                throw err;
+            }
             throw new HttpException(AuthErrors.AUTH_500_UPDATE, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -252,6 +259,9 @@ export class AuthService {
             return await this.authRepository.find();
         } catch (err: any) {
             this.logger.error(err);
+            if (returnError()) {
+                throw err;
+            }
             throw new HttpException(AuthErrors.AUTH_500_RETRIEVE, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -265,6 +275,9 @@ export class AuthService {
             return Promise.reject(new HttpException(AuthErrors.AUTH_404_ID, HttpStatus.NOT_FOUND));
         } catch (err: any) {
             this.logger.error(err);
+            if (returnError()) {
+                throw err;
+            }
             throw new HttpException(AuthErrors.AUTH_500_RETRIEVE, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -278,6 +291,9 @@ export class AuthService {
             return HttpStatus.NOT_FOUND;
         } catch (err: any) {
             this.logger.error(err);
+            if (returnError()) {
+                throw err;
+            }
             return HttpStatus.INTERNAL_SERVER_ERROR;
         }
     }
@@ -295,6 +311,9 @@ export class AuthService {
             return HttpStatus.NOT_FOUND;
         } catch (err: any) {
             this.logger.error(err);
+            if (returnError()) {
+                throw err;
+            }
             return HttpStatus.INTERNAL_SERVER_ERROR;
         }
     }
@@ -316,6 +335,9 @@ export class AuthService {
                 return HttpStatus.NOT_FOUND;
             }
             this.logger.error(err);
+            if (returnError()) {
+                throw err;
+            }
             return HttpStatus.INTERNAL_SERVER_ERROR;
         }
     }
@@ -382,6 +404,9 @@ export class AuthService {
             })
             .catch(err => {
                 this.logger.error(err);
+                if (returnError()) {
+                    throw err;
+                }
                 throw new HttpException(AuthErrors.AUTH_500_EMAIL_SEND, HttpStatus.INTERNAL_SERVER_ERROR);
             });
     }

@@ -10,6 +10,7 @@ import { StatusString } from "./entity.enums";
 import { toFirstCase } from "./entity.methods";
 import { Err, Errors } from "./entity.errors";
 import { DataService } from "../../market/data/services/data.service";
+import { returnError } from "../methods/errors";
 
 export class Service<Entity extends CommonEntity> {
 
@@ -76,6 +77,9 @@ export class Service<Entity extends CommonEntity> {
                 throw this.gerError(Err.E_409_EXIST);
             }
             this.logger.error(err);
+            if (returnError()) {
+                throw err;
+            }
             throw this.gerError(Err.E_500_CREATE);
         }
     }
@@ -95,6 +99,9 @@ export class Service<Entity extends CommonEntity> {
                 throw this.gerError(Err.E_409_EXIST);
             }
             this.logger.error(err);
+            if (returnError()) {
+                throw err;
+            }
             throw this.gerError(Err.E_500_CREATE);
         }
     }
@@ -114,6 +121,9 @@ export class Service<Entity extends CommonEntity> {
                 throw this.gerError(Err.E_409_EXIST);
             }
             this.logger.error(err);
+            if (returnError()) {
+                throw err;
+            }
             throw this.gerError(Err.E_500_CREATE);
         }
     }
@@ -158,6 +168,9 @@ export class Service<Entity extends CommonEntity> {
                 throw this.gerError(Err.E_409_EXIST);
             }
             this.logger.error(err);
+            if (returnError()) {
+                throw err;
+            }
             throw this.gerError(Err.E_500_UPDATE);
         }
     }
@@ -189,6 +202,9 @@ export class Service<Entity extends CommonEntity> {
                 }
             }
             this.logger.error(err);
+            if (returnError()) {
+                throw err;
+            }
             throw this.gerError(Err.E_500_RETRIEVE);
         }
     }
@@ -211,6 +227,9 @@ export class Service<Entity extends CommonEntity> {
                 }
             }
             this.logger.error(err);
+            if (returnError()) {
+                throw err;
+            }
             throw this.gerError(Err.E_500_RETRIEVE);
         }
     }
@@ -230,6 +249,9 @@ export class Service<Entity extends CommonEntity> {
                 }
             }
             this.logger.error(err);
+            if (returnError()) {
+                throw err;
+            }
             throw this.gerError(Err.E_500_DELETE);
         }
     }
@@ -249,6 +271,9 @@ export class Service<Entity extends CommonEntity> {
                 }
             }
             this.logger.error(err);
+            if (returnError()) {
+                throw err;
+            }
             throw this.gerError(Err.E_500_DELETE);
         }
     }
@@ -268,6 +293,9 @@ export class Service<Entity extends CommonEntity> {
                 }
             }
             this.logger.error(err);
+            if (returnError()) {
+                throw err;
+            }
             throw this.gerError(Err.E_500_UPDATE);
         }
     }
@@ -287,6 +315,9 @@ export class Service<Entity extends CommonEntity> {
                 }
             }
             this.logger.error(err);
+            if (returnError()) {
+                throw err;
+            }
             throw this.gerError(Err.E_500_UPDATE);
         }
     }
@@ -296,6 +327,9 @@ export class Service<Entity extends CommonEntity> {
             return await this.repository.count(options);
         } catch (err: any) {
             this.logger.error(err);
+            if (returnError()) {
+                throw err;
+            }
             throw this.gerError(Err.E_500_RETRIEVE);
         }
     }

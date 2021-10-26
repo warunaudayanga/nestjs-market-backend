@@ -5,6 +5,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Auth } from "../entities/auth.entity";
 import { Repository, FindConditions } from "typeorm";
 import { VerifyToken } from "../entities/verify-token.entity";
+import { returnError } from "../../common/methods/errors";
 
 @Injectable()
 export class VerifyTokenService {
@@ -16,6 +17,9 @@ export class VerifyTokenService {
             return await this.verifyTokenRepository.save({ auth: auth.id, token });
         } catch (err: any) {
             this.logger.error(err);
+            if (returnError()) {
+                throw err;
+            }
             throw new HttpException(VTokenErrors.VTOKEN_500_CREATE_TOKEN, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -26,6 +30,9 @@ export class VerifyTokenService {
             return Boolean(deleteResult.affected);
         } catch (err: any) {
             this.logger.error(err);
+            if (returnError()) {
+                throw err;
+            }
             throw new HttpException(VTokenErrors.VTOKEN_500_DELETE_TOKEN, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -35,6 +42,9 @@ export class VerifyTokenService {
             return Boolean(await this.verifyTokenRepository.findOne(filter));
         } catch (err: any) {
             this.logger.error(err);
+            if (returnError()) {
+                throw err;
+            }
             throw new HttpException(VTokenErrors.VTOKEN_500_DELETE_RETRIEVE, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
