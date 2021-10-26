@@ -10,6 +10,11 @@ const CommonErrors = {
         code: "COMMON_400_INVALID_STATUS_STRING",
         message: "Invalid value for status string!"
     },
+    ADDRESS_400_EMPTY_LINE: {
+        status: 400,
+        code: "ADDRESS_400_EMPTY_LINE",
+        message: "Address line 1 cannot be empty!"
+    },
 
     ERROR: {
         status: 500,

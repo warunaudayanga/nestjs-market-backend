@@ -1,10 +1,23 @@
-import { IsDateString, IsEnum, IsNotEmpty, IsOptional, IsUrl, IsUUID, Matches, ValidateIf } from "class-validator";
+import {
+    IsDateString,
+    IsEnum,
+    IsNotEmpty,
+    IsObject,
+    IsOptional,
+    IsUrl,
+    IsUUID,
+    Matches,
+    ValidateIf, ValidateNested
+} from "class-validator";
 import { toErrString } from "../../../common/converters/error-message.converter";
 import { UserErrors } from "./user.errors.dto";
 import { User } from "../entities/user.entity";
 import { Gender } from "../enums/user.enums";
 import { CommonDto } from "../../../common/dto/common.dto";
 import { CommonEntity } from "../../../common/entity/entity";
+import { Address } from "../../../common/interfaces/address.interfaces";
+import { Type } from "class-transformer";
+import { AddressDto } from "../../../common/dto/address.dto";
 
 export interface UserDto extends User, CommonEntity, CommonDto { }
 
@@ -52,6 +65,13 @@ export class UserDto {
     @Matches(/^([0][7][01245678][0-9]{7})$/, toErrString(UserErrors.USER_400_INVALID_PHONE))
     @ValidateIf(o => o.phone !== "")
     phone?: string;
+
+    @IsOptional()
+    @ValidateNested()
+    @Type(() => AddressDto)
+    @IsObject(toErrString(UserErrors.USER_400_INVALID_ADDRESS))
+    @ValidateIf(o => o.address !== "")
+    address?: Address;
 
     protected get(): UserDto {
         return this;

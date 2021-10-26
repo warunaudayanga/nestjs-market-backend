@@ -1,7 +1,7 @@
 import { StatusString } from "../entity/entity.enums";
 import { IsBoolean, IsEnum, IsOptional } from "class-validator";
 import { toErrString } from "../converters/error-message.converter";
-import { CommonErrors } from "./common-errors.dto";
+import { CommonErrors } from "./common.errors.dto";
 import { decorate } from "ts-mixer";
 import { CommonEntity } from "../entity/entity";
 

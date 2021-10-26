@@ -2,6 +2,7 @@ import { Entity, Column, JoinColumn, ManyToOne, PrimaryGeneratedColumn, CreateDa
 import { Position } from "./position.entity";
 import { Gender } from "../enums/user.enums";
 import { CommonEntity } from "../../../common/entity/entity";
+import { Address } from "../../../common/interfaces/address.interfaces";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface User extends CommonEntity { }
@@ -43,8 +44,8 @@ export class User {
     @Column({ default: "" })
     phone?: string;
 
-    @Column({ default: "" })
-    address?: string;
+    @Column("simple-json")
+    address?: Address;
 
     @CreateDateColumn({ insert: false, update: false })
     regDate?: Date;

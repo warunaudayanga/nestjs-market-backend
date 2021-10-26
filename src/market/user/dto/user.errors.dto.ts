@@ -54,6 +54,11 @@ const UserErrors = {
         code: "USER_400_INVALID_PHONE",
         message: "Invalid value for user phone!"
     },
+    USER_400_INVALID_ADDRESS: {
+        status: 400,
+        code: "USER_400_INVALID_ADDRESS",
+        message: "Invalid value for user address!"
+    },
     USER_400_INVALID_USER_REFERRED: {
         status: 400,
         code: "USER_400_INVALID_USER_REFERRED",
