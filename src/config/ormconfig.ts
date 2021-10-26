@@ -13,11 +13,11 @@ export const dev: TypeOrmModuleOptions = {
 
 export const prod: TypeOrmModuleOptions = {
     type: "mysql",
-    host: "localhost",
+    host: "y5svr1t2r5xudqeq.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
     port: 3306,
-    username: "root",
-    password: "root",
-    database: "market-nest",
+    username: "vabjdmv9zvtupsig",
+    password: "hph42p3squlpt4tv",
+    database: "ggmaaa1v7znur9qc",
     entities: ["dist/**/*.entity{.ts,.js}"],
     synchronize: false
 };
