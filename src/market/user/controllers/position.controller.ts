@@ -42,7 +42,6 @@ export class PositionController {
         return this.positionService.deactivate(id);
     }
 
-    @UseGuards(JwtAuthGuard)
     @Get("get")
     get(@Query("id") id: string): Promise<Position> {
         return this.positionService.get(id);
@@ -55,7 +54,6 @@ export class PositionController {
         return this.positionService.getOne(filter);
     }
 
-    @UseGuards(JwtAuthGuard, RolesGuard)
     @Get("getAll")
     getAll(): Promise<Position[]> {
         return this.positionService.getAll();
