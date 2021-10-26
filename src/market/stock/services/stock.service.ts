@@ -13,6 +13,7 @@ import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity
 import { SuccessDto } from "../../../common/entity/entity.success.dto";
 import { Purchase } from "../../purchase/entities/purchase.entity";
 import { Err } from "../../../common/entity/entity.errors";
+import { returnError } from "../../../common/methods/errors";
 
 @Injectable({ scope: Scope.REQUEST })
 export class StockService extends Service<Stock> {
@@ -71,6 +72,9 @@ export class StockService extends Service<Stock> {
             try {
                 await this.create({ product, price: purchase.salePrice, qty: purchase.qty });
             } catch (err: any) {
+                if (returnError()) {
+                    throw err;
+                }
                 throw this.gerError(Err.E_500_UPDATE);
             }
         }

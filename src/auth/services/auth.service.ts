@@ -350,6 +350,10 @@ export class AuthService {
             }
             return Promise.reject(new HttpException(AuthErrors.AUTH_404_ID, HttpStatus.NOT_FOUND));
         } catch (err: any) {
+            this.logger.error(err);
+            if (returnError()) {
+                throw err;
+            }
             throw new HttpException(AuthErrors.AUTH_500_DELETE, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
