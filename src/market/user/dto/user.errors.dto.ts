@@ -77,7 +77,7 @@ const UserErrors = {
     USER_409_EXIST_NIC: {
         status: 409,
         code: "USER_409_EXIST_NIC",
-        message: "User with given path nic exist!"
+        message: "User with given nic exist!"
     }
 };
 
