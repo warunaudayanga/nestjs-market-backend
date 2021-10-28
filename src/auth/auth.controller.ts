@@ -28,7 +28,6 @@ export class AuthController {
     async verify(@Res() res: Response, @Query() verifyTokenDto: VerifyTokenDto): Promise<void> {
         const status = await this.authService.verify(verifyTokenDto);
         res.redirect("/verify?status=" + status);
-        res.status(100).json("/verify?status=" + status);
     }
 
     @Post("authenticate")

@@ -56,7 +56,7 @@ export class PositionController {
 
     @Get("getAll")
     getAll(): Promise<Position[]> {
-        return this.positionService.getAll();
+        return this.positionService.getAll({ order: { name: "ASC" } });
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)

@@ -62,7 +62,7 @@ export class UserDto {
     position: string;
 
     @IsOptional()
-    @Matches(/^([0][7][01245678][0-9]{7})$/, toErrString(UserErrors.USER_400_INVALID_PHONE))
+    @Matches(/^([0][7][\d]{8})$/, toErrString(UserErrors.USER_400_INVALID_PHONE))
     @ValidateIf(o => o.phone !== "")
     phone?: string;
 
