@@ -25,7 +25,7 @@ export class SupplierService extends Service<Supplier> {
         super(["supplier"], supplierRepository, req, logger, dataService);
     }
 
-    async create<T extends DeepPartial<Supplier> & DeepPartial<CommonEntity>>(entity: T): Promise<T> {
+    async create<T extends DeepPartial<Supplier> & DeepPartial<CommonEntity>>(entity: T): Promise<Supplier> {
         const code = await this.createCode("supplierCode");
         entity.code = code;
         let supplier = await super.create(entity);

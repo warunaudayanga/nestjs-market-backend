@@ -46,7 +46,7 @@ export class Errors {
         },
         E_409_EXIST: {
             status: 409,
-            code: "{{upperCase}}_409_EXIST_PATH",
+            code: "{{upperCase}}_409_EXIST_{{upperConflict}}",
             message: "{{firstCase}} with given {{conflict}} already exist!"
         },
         E_500_CREATE: {

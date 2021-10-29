@@ -33,7 +33,7 @@ export class AccessService extends Service<Access> {
         super(["access"], accessRepository, req, logger);
     }
 
-    create<T extends DeepPartial<Access> & DeepPartial<CommonEntity>>(entity: T, options?: SaveOptions): Promise<T> {
+    create<T extends DeepPartial<Access> & DeepPartial<CommonEntity>>(entity: T, options?: SaveOptions): Promise<Access> {
         return super.create(entity, options, this.writeErrorHandler);
     }
 

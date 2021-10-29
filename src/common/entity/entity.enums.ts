@@ -1,6 +1,8 @@
 // noinspection JSUnusedGlobalSymbols
 
 export enum StatusString {
+    PENDING = "Pending",
     ACTIVE = "Active",
-    DEACTIVE = "Deactive"
+    DEACTIVE = "Deactive",
+    DELETED = "Deleted",
 }

@@ -44,7 +44,7 @@ export class StockService extends Service<Stock> {
         super(["stock"], stockRepository, req, logger);
     }
 
-    create<T extends DeepPartial<Stock & CommonEntity>>(stock: T): Promise<T> {
+    create<T extends DeepPartial<Stock & CommonEntity>>(stock: T): Promise<Stock> {
         return super.create(stock, undefined, this.writeErrorHandler);
     }
 

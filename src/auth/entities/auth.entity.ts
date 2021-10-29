@@ -1,6 +1,11 @@
 import { Entity, Column, PrimaryGeneratedColumn, JoinColumn, OneToOne } from "typeorm";
-import { AuthType, StatusString } from "../enums/auth.enums";
+import { AuthType } from "../enums/auth.enums";
 import { User } from "../../market/user/entities/user.entity";
+import { CommonEntity } from "../../common/entity/entity";
+import { StatusString } from "../../common/entity/entity.enums";
+
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface Auth extends CommonEntity { }
 
 @Entity()
 export class Auth {
@@ -30,7 +35,7 @@ export class Auth {
     @Column({ default: false })
     status: boolean;
 
-    @Column({ type: "enum", enum: StatusString, default: StatusString.Pending })
+    @Column({ type: "enum", enum: StatusString, default: StatusString.PENDING })
     statusString: StatusString;
 
     @Column({

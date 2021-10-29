@@ -33,7 +33,7 @@ export class UserService extends Service<User>{
         throw this.gerError(Err.E_405);
     }
 
-    createAlt<T extends DeepPartial<User>>(entity: T): Promise<T> {
+    createAlt<T extends DeepPartial<User>>(entity: T): Promise<User> {
         return super.createAlt(entity, undefined, this.writeErrorHandler);
     }
 

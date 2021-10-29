@@ -1,29 +1,34 @@
-import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
-import { pbkdf2Sync, randomBytes } from "crypto";
-import { readFileSync } from "fs";
-import { join } from "path";
-import { JwtService } from "@nestjs/jwt";
-import { AuthDataDto } from "../dto/auth-data.dto";
-import { AuthErrors } from "../dto/auth.errors.dto";
-import { TokenData } from "../interfaces/token-data.interface";
+import { HttpException, HttpStatus, Inject, Injectable, Scope } from "@nestjs/common";
+import { Auth } from "../entities/auth.entity";
+import { InjectRepository } from "@nestjs/typeorm";
 import { LoggerService } from "../../common/services/logger.service";
+import { SuccessDto } from "../../common/entity/entity.success.dto";
+import { Service } from "../../common/entity/entity.service";
+import { REQUEST } from "@nestjs/core";
+import { Request } from "express";
+import { AuthRepository } from "../repositories/auth.repository";
+import { AuthErrors } from "../dto/auth.errors.dto";
+import { join } from "path";
+import { readFileSync } from "fs";
+import { JwtService } from "@nestjs/jwt";
 import { VerifyTokenService } from "./verify-token.service";
 import { EmailService } from "../../common/services/email.service";
-import { VerifyTokenDto } from "../dto/verify-token.dto";
-import { AuthType, StatusString } from "../enums/auth.enums";
-import { SuccessDto } from "../../common/entity/entity.success.dto";
-import { InjectRepository } from "@nestjs/typeorm";
-import { FindConditions, Repository } from "typeorm";
-import { Auth } from "../entities/auth.entity";
-import { VerifyToken } from "../entities/verify-token.entity";
-import { CreateAuthDto } from "../dto/create-auth.dto";
+import { pbkdf2Sync, randomBytes } from "crypto";
 import { CryptAuthDto } from "../dto/crypt-auth.dto";
+import { VerifyToken } from "../entities/verify-token.entity";
+import { returnError } from "../../common/methods/errors";
+import { RegisterDto } from "../dto/register.dto";
+import { VerifyTokenDto } from "../dto/verify-token.dto";
+import { StatusString } from "../../common/entity/entity.enums";
+import { AuthDataDto } from "../dto/auth-data.dto";
+import { TokenData } from "../interfaces/token-data.interface";
+import { AuthType } from "../enums/auth.enums";
 import { AuthDto } from "../dto/auth.dto";
+import { CommonEntity } from "../../common/entity/entity";
 import { UserErrors } from "../../market/user/dto/user.errors.dto";
-import { returnError } from "src/common/methods/errors";
 
-@Injectable()
-export class AuthService {
+@Injectable({ scope: Scope.REQUEST })
+export class AuthService extends Service<Auth>{
 
     private static keyPath = join(__dirname, "../config/keys");
 
@@ -33,13 +38,22 @@ export class AuthService {
 
     public static EXPIRES_IN = 60 * 60 * 24;
 
+    private writeErrorHandler = (err) : Error | void => {
+        if (err.errno === 1062 && err.sqlMessage?.match(/(for key 'users\.)/)) {
+            return new HttpException(UserErrors.USER_409_EXIST_NIC, HttpStatus.CONFLICT);
+        }
+    }
+
     constructor(
-        @InjectRepository(Auth) private authRepository: Repository<Auth>,
+        @InjectRepository(AuthRepository) private authRepository: AuthRepository,
+        @Inject(REQUEST) protected readonly req: Request,
+        protected logger: LoggerService,
         private jwtService: JwtService,
-        private logger: LoggerService,
         private verifyTokenService: VerifyTokenService,
         private emailService: EmailService
-    ) {}
+    ) {
+        super(["auth", "email"], authRepository, req, logger);
+    }
 
     public static getPrivateKey(): string {
         return AuthService.PRV_KEY;
@@ -64,12 +78,20 @@ export class AuthService {
         return hash === generatedHash;
     }
 
-    async register(createAuthDto: CreateAuthDto): Promise<SuccessDto> {
-        const authDto = new AuthDto(createAuthDto);
-        const auth = await this.create(authDto);
-        const verifyToken = await this.verifyTokenService.create(auth, AuthService.generateRandomHash());
-        await this.sendVerificationEmail(auth, verifyToken);
-        return new SuccessDto("User registered successfully. Check your email for the verification.");
+    async register(registerDto: RegisterDto): Promise<SuccessDto> {
+        await this.startTransaction();
+        try {
+            const authDto = new AuthDto(registerDto);
+            const auth = await this.createAlt(authDto, undefined, this.writeErrorHandler);
+            const verifyTokenDto = new VerifyTokenDto(auth, AuthService.generateRandomHash());
+            const verifyToken = await this.repository.queryRunner.manager.save(VerifyToken, verifyTokenDto) as VerifyToken & CommonEntity;
+            await this.sendVerificationEmail(auth, verifyToken);
+            await this.commitTransaction();
+            return new SuccessDto("User registered successfully. Check your email for the verification.");
+        } catch (err: any) {
+            await this.rollbackTransaction();
+            throw err;
+        }
     }
 
     async verify(verifyTokenDto: VerifyTokenDto): Promise<string> {
@@ -88,7 +110,7 @@ export class AuthService {
             }
 
             if (await this.verifyTokenService.check(verifyTokenDto)) {
-                if (await this.setVerified(verifyTokenDto.auth) && await this.verifyTokenService.delete(verifyTokenDto.auth)) {
+                if (await this.setVerified(verifyTokenDto.auth) && await this.verifyTokenService.deleteBool(verifyTokenDto)) {
                     return "success";
                 }
                 return "fail";
@@ -103,7 +125,8 @@ export class AuthService {
 
     async requestRecovery(email: string): Promise<SuccessDto> {
         const auth = await this.getOne({ email });
-        const verifyToken = await this.verifyTokenService.create(auth, AuthService.generateRandomHash());
+        const verifyTokenDto = new VerifyTokenDto(auth, AuthService.generateRandomHash());
+        const verifyToken = await this.verifyTokenService.createAlt(verifyTokenDto);
         await this.sendRecoveryEmail(auth, verifyToken);
         return new SuccessDto("Password recovery email sent successfully.");
     }
@@ -122,8 +145,8 @@ export class AuthService {
 
         try {
             if (await this.verifyTokenService.check(verifyTokenDto)) {
-                if (await this.verifyTokenService.delete(verifyTokenDto.auth)) {
-                    return await this.verifyTokenService.create(auth, this.issueJWT(auth).token);
+                if (await this.verifyTokenService.deleteBool(verifyTokenDto)) {
+                    return await this.verifyTokenService.createAlt(new VerifyTokenDto(auth, this.issueJWT(auth).token));
                 }
                 return "fail";
             }
@@ -137,7 +160,7 @@ export class AuthService {
     async resetPassword(auth: string, password: string): Promise<SuccessDto> {
         if (await this.verifyTokenService.check({ auth })) {
             await this.changePassword(auth, password);
-            if (await this.verifyTokenService.delete(auth)) {
+            if (await this.verifyTokenService.deleteBool({ auth })) {
                 return new SuccessDto("Password changed successfully.");
             }
             return Promise.reject(new HttpException(AuthErrors.AUTH_500_UPDATE, HttpStatus.INTERNAL_SERVER_ERROR));
@@ -161,7 +184,7 @@ export class AuthService {
                 return Promise.reject(new HttpException(AuthErrors.AUTH_401_NOT_VERIFIED, HttpStatus.UNAUTHORIZED));
             }
 
-            if (auth.statusString !== StatusString.Active) {
+            if (auth.statusString !== StatusString.ACTIVE) {
                 return Promise.reject(new HttpException(AuthErrors.AUTH_401_NOT_ACTIVE, HttpStatus.UNAUTHORIZED));
             }
 
@@ -185,92 +208,35 @@ export class AuthService {
 
     }
 
-    async create(auth: Auth): Promise<Auth> {
-        try {
-            const createdAuth = await this.authRepository.save(auth);
-            if (createdAuth) {
-                return createdAuth;
-            }
-            return Promise.reject(new HttpException(AuthErrors.AUTH_500_CREATE, HttpStatus.INTERNAL_SERVER_ERROR));
-        } catch (err: any) {
-            if (err.code === "ER_DUP_ENTRY") {
-                if (err.sql.match(/(INSERT INTO `users`)/)) {
-                    throw new HttpException(UserErrors.USER_409_EXIST_NIC, HttpStatus.CONFLICT);
-                }
-                throw new HttpException(AuthErrors.AUTH_409_EXIST_EMAIL, HttpStatus.CONFLICT);
-            }
-            this.logger.error(err);
-            if (returnError()) {
-                throw err;
-            }
-            throw new HttpException(AuthErrors.AUTH_500_CREATE, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    async update(id: string, auth: Partial<Auth>): Promise<SuccessDto> {
-        try {
-            const updateResult = await this.authRepository.update(id, auth);
-            if (Number(updateResult.affected) > 0) {
-                return new SuccessDto("User updated successfully.");
-            }
-            return Promise.reject(new HttpException(AuthErrors.AUTH_404_ID, HttpStatus.NOT_FOUND));
-        } catch (err: any) {
-            if (err.code === "ER_DUP_ENTRY") {
-                throw new HttpException(AuthErrors.AUTH_409_EXIST_EMAIL, HttpStatus.CONFLICT);
-            }
-            this.logger.error(err);
-            if (returnError()) {
-                throw err;
-            }
-            throw new HttpException(AuthErrors.AUTH_500_UPDATE, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
     changePassword(id: string, password: string): Promise<SuccessDto> {
-        return this.update(id, AuthService.generatePassword(password));
+        return this.updateAlt(id, AuthService.generatePassword(password));
     }
 
     changeType(id: string, authType: AuthType): Promise<SuccessDto> {
-        return this.update(id, { type: authType });
+        return this.updateAlt(id, { type: authType });
     }
 
     activate(id: string): Promise<SuccessDto> {
-        return this.update(id, { status: true, statusString: StatusString.Active });
+        return this.updateAlt(id, { status: true, statusString: StatusString.ACTIVE });
     }
 
     deactivate(id: string): Promise<SuccessDto> {
-        return this.update(id, { status: false, statusString: StatusString.Deactive });
+        return this.updateAlt(id, { status: false, statusString: StatusString.DEACTIVE });
     }
 
     delete(id: string): Promise<SuccessDto> {
-        return this.update(id, { verified: false, status: false, statusString: StatusString.Deleted });
+        return this.updateAlt(id, { verified: false, status: false, statusString: StatusString.DELETED });
     }
 
     undelete(id: string): Promise<SuccessDto> {
-        return this.update(id, { verified: false, status: false, statusString: StatusString.Pending });
+        return this.updateAlt(id, { verified: false, status: false, statusString: StatusString.PENDING });
     }
 
-    get(id: string): Promise<Auth> {
-        return this.getOne({ id });
-    }
-
-    async getAll(): Promise<Auth[]> {
+    async hardDelete(id: string): Promise<SuccessDto> {
         try {
-            return await this.authRepository.find();
-        } catch (err: any) {
-            this.logger.error(err);
-            if (returnError()) {
-                throw err;
-            }
-            throw new HttpException(AuthErrors.AUTH_500_RETRIEVE, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    async getOne(filter: FindConditions<Auth>): Promise<Auth> {
-        try {
-            const auth = await this.authRepository.findOne(filter);
-            if (auth) {
-                return auth;
+            const deleteResult = await this.authRepository.delete(id);
+            if (deleteResult.affected > 0) {
+                return Promise.resolve(new SuccessDto());
             }
             return Promise.reject(new HttpException(AuthErrors.AUTH_404_ID, HttpStatus.NOT_FOUND));
         } catch (err: any) {
@@ -278,18 +244,18 @@ export class AuthService {
             if (returnError()) {
                 throw err;
             }
-            throw new HttpException(AuthErrors.AUTH_500_RETRIEVE, HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new HttpException(AuthErrors.AUTH_500_DELETE, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     async isVerified(id: string): Promise<boolean | HttpStatus> {
         try {
             const auth = await this.getOne({ id });
-            if (auth) {
-                return auth.verified;
-            }
-            return HttpStatus.NOT_FOUND;
+            return auth.verified;
         } catch (err: any) {
+            if (err.response?.status === 404) {
+                return HttpStatus.NOT_FOUND;
+            }
             this.logger.error(err);
             if (returnError()) {
                 throw err;
@@ -300,10 +266,10 @@ export class AuthService {
 
     async setVerified(id: string, verified?: boolean): Promise<boolean | HttpStatus> {
         try {
-            const auth = await this.update(id, {
+            const auth = await this.updateAlt(id, {
                 verified: verified !== undefined ? verified : true,
                 status: verified !== undefined ? verified : true,
-                statusString: verified !== undefined ? verified ? StatusString.Active : StatusString.Pending : StatusString.Active
+                statusString: verified !== undefined ? verified ? StatusString.ACTIVE : StatusString.PENDING : StatusString.ACTIVE
             });
             if (auth) {
                 return true;
@@ -316,6 +282,17 @@ export class AuthService {
             }
             return HttpStatus.INTERNAL_SERVER_ERROR;
         }
+    }
+
+    public issueJWT = (auth: Auth): { expires: number; token: string } => {
+        const id = auth.id;
+        const expiresIn = 60 * 60 * 24;
+        const payload = { sub: id, iat: Date.now() };
+        const accessToken = this.jwtService.sign(payload, { expiresIn, algorithm: "RS256" });
+        return {
+            token: "Bearer " + accessToken,
+            expires: expiresIn
+        };
     }
 
     async getSensitive(filter: { id?: string, email?: string }): Promise<Auth | number> {
@@ -340,33 +317,6 @@ export class AuthService {
             }
             return HttpStatus.INTERNAL_SERVER_ERROR;
         }
-    }
-
-    async hardDelete(id: string): Promise<SuccessDto> {
-        try {
-            const deleteResult = await this.authRepository.delete(id);
-            if (deleteResult.affected > 0) {
-                return Promise.resolve(new SuccessDto());
-            }
-            return Promise.reject(new HttpException(AuthErrors.AUTH_404_ID, HttpStatus.NOT_FOUND));
-        } catch (err: any) {
-            this.logger.error(err);
-            if (returnError()) {
-                throw err;
-            }
-            throw new HttpException(AuthErrors.AUTH_500_DELETE, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    public issueJWT = (auth: Auth): { expires: number; token: string } => {
-        const id = auth.id;
-        const expiresIn = 60 * 60 * 24;
-        const payload = { sub: id, iat: Date.now() };
-        const accessToken = this.jwtService.sign(payload, { expiresIn, algorithm: "RS256" });
-        return {
-            token: "Bearer " + accessToken,
-            expires: expiresIn
-        };
     }
 
     private async sendVerificationEmail(auth: Auth, verifyToken: VerifyToken): Promise<void> {

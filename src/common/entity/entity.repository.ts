@@ -18,41 +18,45 @@ export class CommonRepository<Entity> extends Repository<Entity> {
         return this.queryRunner.isTransactionActive;
     }
 
-    saveAuth<T extends DeepPartial<Entity> & DeepPartial<CommonEntity>>(entity: T, req: ReqAuth, options?: SaveOptions): Promise<T> {
+    saveAuth<T extends DeepPartial<Entity> & DeepPartial<CommonEntity>>(entity: T, req: ReqAuth, options?: SaveOptions): Promise<Entity> {
         omit(entity);
         entity.createdBy = req.user.auth.id;
         entity.updatedBy = null;
         if (this.isTransactional()) {
-            return this.queryRunner.manager.save(entity, options);
+            const entityInstance = this.queryRunner.manager.create(this.EntityTarget, entity) as Entity & CommonEntity;
+            return this.queryRunner.manager.save(entityInstance, options);
         }
         return super.save(entity, options);
     }
 
-    saveAlt<T extends DeepPartial<Entity>>(entity: T, options?: SaveOptions): Promise<T> {
+    saveAlt<T extends DeepPartial<Entity>>(entity: T, options?: SaveOptions): Promise<Entity> {
         omit(entity);
         if (this.isTransactional()) {
-            return this.queryRunner.manager.save(entity, options);
+            const entityInstance = this.queryRunner.manager.create(this.EntityTarget, entity) as Entity & CommonEntity;
+            return this.queryRunner.manager.save(entityInstance, options);
         }
         return super.save(entity, options);
     }
 
-    async saveBulk<T extends DeepPartial<Entity> & DeepPartial<CommonEntity>>(entities: T[], req: ReqAuth, options?: SaveOptions): Promise<T[]> {
+    async saveBulk<T extends DeepPartial<Entity> & DeepPartial<CommonEntity>>(entities: T[], req: ReqAuth, options?: SaveOptions): Promise<Entity[]> {
         entities.forEach(entity => {
             omit(entity);
             entity.createdBy = req.user.auth.id;
             entity.updatedBy = null;
         });
         if (this.isTransactional()) {
-            return await this.queryRunner.manager.save(entities, options);
+            const entityInstance = this.queryRunner.manager.create(this.EntityTarget, entities) as (Entity & CommonEntity)[];
+            return await this.queryRunner.manager.save(entityInstance, options);
         }
         return super.save(entities, options);
     }
 
     // noinspection JSUnusedGlobalSymbols
-    saveBulkAlt<T extends DeepPartial<Entity>>(entities: T[], options?: SaveOptions): Promise<T[]> {
+    async saveBulkAlt<T extends DeepPartial<Entity>>(entities: T[], options?: SaveOptions): Promise<Entity[]> {
         entities.forEach(entity => omit(entity));
         if (this.isTransactional()) {
-            return this.queryRunner.manager.save(entities, options);
+            const entityInstance = this.queryRunner.manager.create(this.EntityTarget, entities) as (Entity & CommonEntity)[];
+            return await this.queryRunner.manager.save(entityInstance, options);
         }
         return super.save(entities, options);
     }

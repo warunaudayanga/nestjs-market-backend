@@ -50,7 +50,7 @@ export class SaleService extends Service<Sale> {
         throw this.gerError(Err.E_500_CREATE);
     }
 
-    async createBulk<T extends DeepPartial<Sale> & DeepPartial<CommonEntity>>(saleList: T[]): Promise<T[]> {
+    async createBulk<T extends DeepPartial<Sale> & DeepPartial<CommonEntity>>(saleList: T[]): Promise<Sale[]> {
         await this.startTransaction();
         try {
             let sales = await super.createBulk(saleList, undefined, this.writeErrorHandler);

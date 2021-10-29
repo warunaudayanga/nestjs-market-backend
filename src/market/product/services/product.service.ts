@@ -32,7 +32,7 @@ export class ProductService extends Service<Product> {
         super(["product"], productRepository, req, logger, dataService);
     }
 
-    async create<T extends DeepPartial<Product> & DeepPartial<CommonEntity>>(entity: T): Promise<T> {
+    async create<T extends DeepPartial<Product> & DeepPartial<CommonEntity>>(entity: T): Promise<Product> {
         const code = await this.createCode("productCode");
         entity.code = code;
         let product = await super.create(entity, undefined, this.writeErrorHandler);

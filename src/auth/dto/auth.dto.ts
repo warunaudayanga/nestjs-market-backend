@@ -1,17 +1,17 @@
 import { Auth } from "../entities/auth.entity";
 import { User } from "../../market/user/entities/user.entity";
-import { CreateAuthDto } from "./create-auth.dto";
 import { AuthService } from "../services/auth.service";
+import { RegisterDto } from "./register.dto";
 
 export class AuthDto extends Auth {
 
-    constructor(createAuthDto: CreateAuthDto) {
+    constructor(registerDto: RegisterDto) {
         super();
-        const cryptData = AuthService.generatePassword(createAuthDto.password);
-        this.email = createAuthDto.email;
+        const cryptData = AuthService.generatePassword(registerDto.password);
+        this.email = registerDto.email;
         this.password = cryptData.password;
         this.salt = cryptData.salt;
-        this.profile = createAuthDto.getUserDto();
+        this.profile = registerDto.getUserDto();
     }
 
     email: string;

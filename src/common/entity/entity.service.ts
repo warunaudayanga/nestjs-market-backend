@@ -62,7 +62,7 @@ export class Service<Entity extends CommonEntity> {
         }
     }
 
-    async create<T extends DeepPartial<Entity> & DeepPartial<CommonEntity>>(entity: T, options?: SaveOptions, eh?: (err: any) => Error | void): Promise<T> {
+    async create<T extends DeepPartial<Entity> & DeepPartial<CommonEntity>>(entity: T, options?: SaveOptions, eh?: (err: any) => Error | void): Promise<Entity> {
 
         try {
             return await this.repository.saveAuth(entity, this.req as ReqAuth, options);
@@ -84,7 +84,7 @@ export class Service<Entity extends CommonEntity> {
         }
     }
 
-    async createAlt<T extends DeepPartial<Entity>>(entity: T, options?: SaveOptions, eh?: (err: any) => Error | void): Promise<T> {
+    async createAlt<T extends DeepPartial<Entity>>(entity: T, options?: SaveOptions, eh?: (err: any) => Error | void): Promise<Entity> {
 
         try {
             return await this.repository.saveAlt(entity, options);
@@ -106,7 +106,7 @@ export class Service<Entity extends CommonEntity> {
         }
     }
 
-    async createBulk<T extends DeepPartial<Entity> & DeepPartial<CommonEntity>>(entities: T[], options?: SaveOptions, eh?: (err: any) => Error | void): Promise<T[]> {
+    async createBulk<T extends DeepPartial<Entity> & DeepPartial<CommonEntity>>(entities: T[], options?: SaveOptions, eh?: (err: any) => Error | void): Promise<Entity[]> {
 
         try {
             return await this.repository.saveBulk(entities, this.req as ReqAuth, options);
@@ -147,12 +147,12 @@ export class Service<Entity extends CommonEntity> {
     //     }
     // }
 
-    async update(condition: string | FindConditions<Entity>, partialEntity: QueryDeepPartialEntity<Entity> & Partial<CommonEntity>, eh?: (err: any) => Error | void): Promise<SuccessDto> {
+    async update(condition: string | FindConditions<Entity>, partialEntity: QueryDeepPartialEntity<Entity> & Partial<CommonEntity>, eh?: (err: any) => Error | void, alt?: boolean): Promise<SuccessDto> {
         if (!condition) {
             return Promise.reject(this.gerError(Err.E_400_EMPTY_ID));
         }
         try {
-            const updateResult = await this.repository.update(condition, partialEntity, this.req as ReqAuth);
+            const updateResult = await this.repository.update(condition, partialEntity, !alt ? this.req as ReqAuth : undefined);
             if (updateResult.affected > 0) {
                 return new SuccessDto(`${toFirstCase(this.entityData[0])} updated successfully.`);
             }
@@ -173,6 +173,10 @@ export class Service<Entity extends CommonEntity> {
             }
             throw this.gerError(Err.E_500_UPDATE);
         }
+    }
+
+    updateAlt(condition: string | FindConditions<Entity>, partialEntity: QueryDeepPartialEntity<Entity> & Partial<CommonEntity>, eh?: (err: any) => Error | void): Promise<SuccessDto> {
+        return this.update(condition, partialEntity, eh, true);
     }
 
     changeStatus(id: string, status: boolean): Promise<SuccessDto> {

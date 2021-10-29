@@ -8,11 +8,13 @@ import { VerifyTokenService } from "./services/verify-token.service";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Auth } from "./entities/auth.entity";
 import { VerifyToken } from "./entities/verify-token.entity";
+import { AuthRepository } from "./repositories/auth.repository";
+import { VerifyTokenRepository } from "./repositories/verify-token.repository";
 
 @Global()
 @Module({
     imports: [
-        TypeOrmModule.forFeature([Auth, VerifyToken]),
+        TypeOrmModule.forFeature([Auth, AuthRepository, VerifyToken, VerifyTokenRepository]),
         JwtModule.register({
             privateKey: AuthService.getPrivateKey(),
             signOptions: { expiresIn: AuthService.EXPIRES_IN }

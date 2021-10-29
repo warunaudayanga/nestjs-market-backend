@@ -1,5 +1,9 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Auth } from "./auth.entity";
+import { CommonEntity } from "../../common/entity/entity";
+
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface VerifyToken extends CommonEntity { }
 
 @Entity()
 export class VerifyToken {

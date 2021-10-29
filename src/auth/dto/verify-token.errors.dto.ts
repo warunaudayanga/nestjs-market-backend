@@ -16,9 +16,9 @@ const VTokenErrors = {
         code: "AUTH_500_CREATE_TOKEN",
         message: "Error occurred while deleting verify token in!"
     },
-    VTOKEN_500_DELETE_RETRIEVE: {
+    VTOKEN_500_RETRIEVE: {
         status: 500,
-        code: "VTOKEN_500_DELETE_RETRIEVE",
+        code: "VTOKEN_500_RETRIEVE",
         message: "Error occurred while retrieving verify token in!"
     },
 
