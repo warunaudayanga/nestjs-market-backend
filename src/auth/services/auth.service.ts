@@ -78,14 +78,14 @@ export class AuthService extends Service<Auth>{
         return hash === generatedHash;
     }
 
-    async register(registerDto: RegisterDto): Promise<SuccessDto> {
+    async register(registerDto: RegisterDto, host: string): Promise<SuccessDto> {
         await this.startTransaction();
         try {
             const authDto = new AuthDto(registerDto);
             const auth = await this.createAlt(authDto, undefined, this.writeErrorHandler);
-            const verifyTokenDto = new VerifyTokenDto(auth, AuthService.generateRandomHash());
+            const verifyTokenDto = new VerifyTokenDto(auth.id, AuthService.generateRandomHash());
             const verifyToken = await this.repository.queryRunner.manager.save(VerifyToken, verifyTokenDto) as VerifyToken & CommonEntity;
-            await this.sendVerificationEmail(auth, verifyToken);
+            await this.sendVerificationEmail(auth, verifyToken, host);
             await this.commitTransaction();
             return new SuccessDto("User registered successfully. Check your email for the verification.");
         } catch (err: any) {
@@ -125,7 +125,7 @@ export class AuthService extends Service<Auth>{
 
     async requestRecovery(email: string): Promise<SuccessDto> {
         const auth = await this.getOne({ email });
-        const verifyTokenDto = new VerifyTokenDto(auth, AuthService.generateRandomHash());
+        const verifyTokenDto = new VerifyTokenDto(auth.id, AuthService.generateRandomHash());
         const verifyToken = await this.verifyTokenService.createAlt(verifyTokenDto);
         await this.sendRecoveryEmail(auth, verifyToken);
         return new SuccessDto("Password recovery email sent successfully.");
@@ -146,7 +146,7 @@ export class AuthService extends Service<Auth>{
         try {
             if (await this.verifyTokenService.check(verifyTokenDto)) {
                 if (await this.verifyTokenService.deleteBool(verifyTokenDto)) {
-                    return await this.verifyTokenService.createAlt(new VerifyTokenDto(auth, this.issueJWT(auth).token));
+                    return await this.verifyTokenService.createAlt(new VerifyTokenDto(auth.id, this.issueJWT(auth).token));
                 }
                 return "fail";
             }
@@ -319,8 +319,10 @@ export class AuthService extends Service<Auth>{
         }
     }
 
-    private async sendVerificationEmail(auth: Auth, verifyToken: VerifyToken): Promise<void> {
+    private async sendVerificationEmail(auth: Auth, verifyToken: VerifyToken, host: string): Promise<void> {
 
+        const serverHost = process.env.SERVER_HOST || `http://localhost:${process.env.PORT || 8080}`;
+        const baseUrl = host.match(/(localhost)/) ? `http://${host}` : `https://${host}`;
         const subject = "Verify Your Email";
         const html = `<br>
                       <br>
@@ -329,7 +331,7 @@ export class AuthService extends Service<Auth>{
                       <h3 style="text-align: center;color: #999">We are glad to see you.</h3>
                       <br>
                       <br>
-                      <h3 style="text-align: center;">Click <a href='http://localhost:8080/api/auth/verify?auth=${auth.id}&token=${verifyToken.token}'>here</a> to verify your email.</h3>`;
+                      <h3 style="text-align: center;">Click <a href='${serverHost}/api/auth/verify?auth=${auth.id}&token=${verifyToken.token}&baseUrl=${encodeURI(baseUrl)}'>here</a> to verify your email.</h3>`;
 
         return await this.sendMail(auth.email, subject, html);
     }

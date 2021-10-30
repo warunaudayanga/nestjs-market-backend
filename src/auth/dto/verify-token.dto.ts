@@ -1,17 +1,15 @@
 import { VerifyToken } from "../entities/verify-token.entity";
-import { AuthDto } from "./auth.dto";
-import { Auth } from "../entities/auth.entity";
 
 export class VerifyTokenDto extends VerifyToken {
 
-    constructor(auth?: Auth | AuthDto, token?: string) {
+    constructor(auth: string, token?: string) {
         super();
-        this.auth = auth?.id;
+        this.auth = auth;
         this.token = token;
     }
 
-    auth: string
+    auth: string;
 
-    token: string
+    token: string;
 
 }

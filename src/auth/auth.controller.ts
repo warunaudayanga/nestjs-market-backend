@@ -1,4 +1,4 @@
-import { Controller, UseGuards, Post, Get, Patch, Res, Body, Query, Scope, Delete } from "@nestjs/common";
+import { Controller, UseGuards, Post, Get, Patch, Res, Body, Query, Headers, Scope, Delete } from "@nestjs/common";
 import { AuthService } from "./services/auth.service";
 import { AuthDataDto } from "./dto/auth-data.dto";
 import { TokenData } from "./interfaces/token-data.interface";
@@ -20,14 +20,14 @@ export class AuthController {
     constructor(private authService: AuthService) { }
 
     @Post("register")
-    register(@Body() createAuthDto: CreateAuthDto): Promise<SuccessDto> {
-        return this.authService.register(new CreateAuthDto(createAuthDto));
+    register(@Body() createAuthDto: CreateAuthDto, @Headers() headers: any): Promise<SuccessDto> {
+        return this.authService.register(new CreateAuthDto(createAuthDto), headers.host);
     }
 
     @Get("verify")
-    async verify(@Res() res: Response, @Query() verifyTokenDto: VerifyTokenDto): Promise<void> {
-        const status = await this.authService.verify(verifyTokenDto);
-        res.redirect("/verify?status=" + status);
+    async verify(@Res() res: Response, @Query("auth") auth: string, @Query("token") token: string, @Query("baseUrl") baseUrl: string): Promise<void> {
+        const status = await this.authService.verify(new VerifyTokenDto(auth, token));
+        res.redirect(`${decodeURI(baseUrl || "http://localhost:8080")}/verify?status=${status}`);
     }
 
     @Post("authenticate")
