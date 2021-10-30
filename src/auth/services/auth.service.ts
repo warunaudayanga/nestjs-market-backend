@@ -192,7 +192,7 @@ export class AuthService extends Service<Auth>{
                 return Promise.reject(new HttpException(AuthErrors.AUTH_401_INVALID, HttpStatus.UNAUTHORIZED));
             }
 
-            const authWithUser = await this.get(auth.id);
+            const authWithUser = await this.get(auth.id, { loadRelationIds: false });
 
             const tokenObject = this.issueJWT(auth);
 
