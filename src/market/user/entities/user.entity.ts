@@ -22,11 +22,6 @@ export class User {
     @Column({ default: "" })
     image?: string;
 
-    @Column({
-        unique: true
-    })
-    nic: string;
-
     @Column("date")
     dob: Date;
 
@@ -44,7 +39,7 @@ export class User {
     @Column({ default: "" })
     phone?: string;
 
-    @Column("simple-json")
+    @Column("simple-json", { nullable: true })
     address?: Address;
 
     @CreateDateColumn({ insert: false, update: false })

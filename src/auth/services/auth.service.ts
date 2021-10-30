@@ -1,11 +1,9 @@
-import { HttpException, HttpStatus, Inject, Injectable, Scope } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { Auth } from "../entities/auth.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { LoggerService } from "../../common/services/logger.service";
 import { SuccessDto } from "../../common/entity/entity.success.dto";
 import { Service } from "../../common/entity/entity.service";
-import { REQUEST } from "@nestjs/core";
-import { Request } from "express";
 import { AuthRepository } from "../repositories/auth.repository";
 import { AuthErrors } from "../dto/auth.errors.dto";
 import { join } from "path";
@@ -19,15 +17,17 @@ import { VerifyToken } from "../entities/verify-token.entity";
 import { returnError } from "../../common/methods/errors";
 import { RegisterDto } from "../dto/register.dto";
 import { VerifyTokenDto } from "../dto/verify-token.dto";
-import { StatusString } from "../../common/entity/entity.enums";
+import { StatusString, AuthType } from "../enums/auth.enums";
 import { AuthDataDto } from "../dto/auth-data.dto";
 import { TokenData } from "../interfaces/token-data.interface";
-import { AuthType } from "../enums/auth.enums";
 import { AuthDto } from "../dto/auth.dto";
 import { CommonEntity } from "../../common/entity/entity";
 import { UserErrors } from "../../market/user/dto/user.errors.dto";
+import { ChangePasswordDto } from "../dto/change-password.dto";
+import { Err } from "../../common/entity/entity.errors";
+import { isEmailVerification } from "../../common/methods/common.methods";
 
-@Injectable({ scope: Scope.REQUEST })
+@Injectable()
 export class AuthService extends Service<Auth>{
 
     private static keyPath = join(__dirname, "../config/keys");
@@ -42,17 +42,19 @@ export class AuthService extends Service<Auth>{
         if (err.errno === 1062 && err.sqlMessage?.match(/(for key 'users\.)/)) {
             return new HttpException(UserErrors.USER_409_EXIST_NIC, HttpStatus.CONFLICT);
         }
+        if (err.sqlMessage?.match(/(REFERENCES `positions`)/)) {
+            return new HttpException(UserErrors.USER_404_POSITION, HttpStatus.NOT_FOUND);
+        }
     }
 
     constructor(
         @InjectRepository(AuthRepository) private authRepository: AuthRepository,
-        @Inject(REQUEST) protected readonly req: Request,
         protected logger: LoggerService,
         private jwtService: JwtService,
         private verifyTokenService: VerifyTokenService,
         private emailService: EmailService
     ) {
-        super(["auth", "email"], authRepository, req, logger);
+        super(["auth", isEmailVerification() ? "email" : "nic"], authRepository, undefined, logger);
     }
 
     public static getPrivateKey(): string {
@@ -78,16 +80,20 @@ export class AuthService extends Service<Auth>{
         return hash === generatedHash;
     }
 
-    async register(registerDto: RegisterDto, host: string): Promise<SuccessDto> {
+    async register(registerDto: RegisterDto, host: string): Promise<SuccessDto | Auth> {
         await this.startTransaction();
         try {
             const authDto = new AuthDto(registerDto);
             const auth = await this.createAlt(authDto, undefined, this.writeErrorHandler);
-            const verifyTokenDto = new VerifyTokenDto(auth.id, AuthService.generateRandomHash());
-            const verifyToken = await this.repository.queryRunner.manager.save(VerifyToken, verifyTokenDto) as VerifyToken & CommonEntity;
-            await this.sendVerificationEmail(auth, verifyToken, host);
+            if (isEmailVerification()) {
+                const verifyTokenDto = new VerifyTokenDto(auth.id, AuthService.generateRandomHash());
+                const verifyToken = await this.repository.queryRunner.manager.save(VerifyToken, verifyTokenDto) as VerifyToken & CommonEntity;
+                await this.sendVerificationEmail(auth, verifyToken, host);
+                await this.commitTransaction();
+                return new SuccessDto("User registered successfully. Check your email for the verification.");
+            }
             await this.commitTransaction();
-            return new SuccessDto("User registered successfully. Check your email for the verification.");
+            return await this.get(auth.id, { loadRelationIds: false });
         } catch (err: any) {
             await this.rollbackTransaction();
             throw err;
@@ -124,6 +130,9 @@ export class AuthService extends Service<Auth>{
     }
 
     async requestRecovery(email: string): Promise<SuccessDto> {
+        if (!isEmailVerification()) {
+            throw this.gerError(Err.E_405);
+        }
         const auth = await this.getOne({ email });
         const verifyTokenDto = new VerifyTokenDto(auth.id, AuthService.generateRandomHash());
         const verifyToken = await this.verifyTokenService.createAlt(verifyTokenDto);
@@ -132,6 +141,10 @@ export class AuthService extends Service<Auth>{
     }
 
     async verifyRecovery(verifyTokenDto: VerifyTokenDto): Promise<VerifyToken | string> {
+
+        if (!isEmailVerification()) {
+            throw this.gerError(Err.E_405);
+        }
 
         if (!verifyTokenDto || !verifyTokenDto.auth || !verifyTokenDto.token) {
             return "invalid_data";
@@ -158,8 +171,11 @@ export class AuthService extends Service<Auth>{
     }
 
     async resetPassword(auth: string, password: string): Promise<SuccessDto> {
+        if (!isEmailVerification()) {
+            throw this.gerError(Err.E_405);
+        }
         if (await this.verifyTokenService.check({ auth })) {
-            await this.changePassword(auth, password);
+            await this.updatePassword(auth, password);
             if (await this.verifyTokenService.deleteBool({ auth })) {
                 return new SuccessDto("Password changed successfully.");
             }
@@ -171,7 +187,8 @@ export class AuthService extends Service<Auth>{
     async authenticate(authDataDto: AuthDataDto): Promise<TokenData> {
 
         try {
-            const auth = await this.getSensitive({ email: authDataDto.username });
+            const where = isEmailVerification() ? { email: authDataDto.password } : { nic: authDataDto.username.toUpperCase() };
+            const auth = await this.getSensitive(where);
 
             if (typeof auth === "number") {
                 if (auth === 500) {
@@ -208,8 +225,20 @@ export class AuthService extends Service<Auth>{
 
     }
 
-    changePassword(id: string, password: string): Promise<SuccessDto> {
+    updatePassword(id: string, password: string): Promise<SuccessDto> {
         return this.updateAlt(id, AuthService.generatePassword(password));
+    }
+
+    async changePassword(id: string, changePasswordDto: ChangePasswordDto): Promise<SuccessDto> {
+        const auth = await this.getSensitive({ id }, true);
+        if (typeof auth !== "number") {
+            if (AuthService.verifyHash(changePasswordDto.current, auth.password, auth.salt)) {
+                await this.updateAlt(id, AuthService.generatePassword(changePasswordDto.new));
+                return new SuccessDto("Password has been changed successfully");
+            }
+            throw new HttpException(AuthErrors.AUTH_401_INVALID_PASSWORD, HttpStatus.UNAUTHORIZED);
+        }
+        throw new HttpException(AuthErrors.AUTH_500_UPDATE, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     changeType(id: string, authType: AuthType): Promise<SuccessDto> {
@@ -295,25 +324,34 @@ export class AuthService extends Service<Auth>{
         };
     }
 
-    async getSensitive(filter: { id?: string, email?: string }): Promise<Auth | number> {
+    async getSensitive(where: { id?: string, email?: string, nic?: string }, throws?: boolean): Promise<Auth | number> {
         try {
             const auth = await this.authRepository
                 .createQueryBuilder("auth")
                 .addSelect("auth.password")
                 .addSelect("auth.salt")
-                .where(filter)
+                .where(where)
                 .getOne();
             if (auth) {
                 return auth;
             }
+            if (throws) {
+                return Promise.reject(new HttpException(AuthErrors.AUTH_404_ID, HttpStatus.NOT_FOUND));
+            }
             return HttpStatus.NOT_FOUND;
         } catch (err: any) {
             if (err.kind === "ObjectId") {
+                if (throws) {
+                    throw new HttpException(AuthErrors.AUTH_404_ID, HttpStatus.NOT_FOUND);
+                }
                 return HttpStatus.NOT_FOUND;
             }
             this.logger.error(err);
             if (returnError()) {
                 throw err;
+            }
+            if (throws) {
+                throw new HttpException(AuthErrors.AUTH_500_RETRIEVE, HttpStatus.INTERNAL_SERVER_ERROR);
             }
             return HttpStatus.INTERNAL_SERVER_ERROR;
         }

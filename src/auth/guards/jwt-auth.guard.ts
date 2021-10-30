@@ -21,6 +21,7 @@ export class JwtAuthGuard extends AuthGuard("jwt") {
         return { auth: {
             id: user.auth.id,
             email: user.auth.email,
+            nic: user.auth.nic,
             type: user.auth.type,
             verified: user.auth.verified,
             status: user.auth.status,

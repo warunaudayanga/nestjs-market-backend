@@ -1,18 +1,38 @@
 const AuthErrors = {
+    AUTH_400_EMPTY_USERNAME: {
+        status: 400,
+        code: "AUTH_400_EMPTY_USERNAME",
+        message: "Username cannot be empty!"
+    },
     AUTH_400_EMPTY_EMAIL: {
         status: 400,
         code: "AUTH_400_EMPTY_EMAIL",
         message: "User email cannot be empty!"
+    },
+    AUTH_400_EMPTY_NIC: {
+        status: 400,
+        code: "AUTH_400_EMPTY_NIC",
+        message: "User nic cannot be empty!"
     },
     AUTH_400_EMPTY_PASSWORD: {
         status: 400,
         code: "AUTH_400_EMPTY_PASSWORD",
         message: "User password cannot be empty!"
     },
+    AUTH_400_EMPTY_NEW_PASSWORD: {
+        status: 400,
+        code: "AUTH_400_EMPTY_NEW_PASSWORD",
+        message: "User new password cannot be empty!"
+    },
     AUTH_400_INVALID_EMAIL: {
         status: 400,
         code: "AUTH_400_INVALID_EMAIL",
         message: "Invalid value for user email!"
+    },
+    AUTH_400_INVALID_NIC: {
+        status: 400,
+        code: "AUTH_400_INVALID_NIC",
+        message: "Invalid value for user nic!"
     },
     AUTH_400_INVALID_TYPE: {
         status: 400,
@@ -33,6 +53,11 @@ const AuthErrors = {
         status: 401,
         code: "AUTH_401_INVALID",
         message: "Invalid username or password!"
+    },
+    AUTH_401_INVALID_PASSWORD: {
+        status: 401,
+        code: "AUTH_401_INVALID_PASSWORD",
+        message: "Invalid current password!"
     },
     AUTH_401_INVALID_TOKEN: {
         status: 401,
@@ -90,6 +115,11 @@ const AuthErrors = {
         status: 500,
         code: "AUTH_500_UPDATE",
         message: "Error occurred while updating user!"
+    },
+    AUTH_500_CHANGE_PASSWORD: {
+        status: 500,
+        code: "AUTH_500_CHANGE_PASSWORD",
+        message: "Error occurred while updating user password!"
     },
     AUTH_500_ACTIVATE: {
         status: 500,

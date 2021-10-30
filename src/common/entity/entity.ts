@@ -7,9 +7,9 @@ export class CommonEntity {
 
     constructor(dto?: Partial<CommonEntity>) {
         this.id = dto?.id;
-        if (dto?.status !== undefined) {
-            this.status = dto.status;
-            this.statusString = dto.status ? StatusString.ACTIVE : StatusString.DEACTIVE;
+        if (dto?.statusString) {
+            this.status = dto.statusString === StatusString.ACTIVE;
+            this.statusString = dto.statusString ?? StatusString.DEACTIVE;
         }
         this.createdBy = dto?.createdBy;
         this.createdAt = dto?.createdAt;
@@ -24,7 +24,7 @@ export class CommonEntity {
     status: boolean;
 
     @Column({ type: "enum", enum: StatusString, default: StatusString.DEACTIVE })
-    statusString: StatusString;
+    statusString: StatusString | string;
 
     @ManyToOne(() => Auth)
     @JoinColumn()

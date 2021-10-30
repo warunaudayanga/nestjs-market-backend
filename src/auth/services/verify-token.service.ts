@@ -1,9 +1,7 @@
-import { HttpException, HttpStatus, Inject, Injectable, Scope } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { VerifyToken } from "../entities/verify-token.entity";
-import { Request } from "express";
 import { InjectRepository } from "@nestjs/typeorm";
 import { LoggerService } from "../../common/services/logger.service";
-import { REQUEST } from "@nestjs/core";
 import { Service } from "../../common/entity/entity.service";
 import { VerifyTokenRepository } from "../repositories/verify-token.repository";
 import { FindConditions } from "typeorm";
@@ -11,15 +9,14 @@ import { returnError } from "../../common/methods/errors";
 import { VTokenErrors } from "../dto/verify-token.errors.dto";
 import { VerifyTokenDto } from "../dto/verify-token.dto";
 
-@Injectable({ scope: Scope.REQUEST })
+@Injectable()
 export class VerifyTokenService extends Service<VerifyToken>{
 
     constructor(
         @InjectRepository(VerifyTokenRepository) private verifyTokenRepository: VerifyTokenRepository,
-        @Inject(REQUEST) protected readonly req: Request,
         protected logger: LoggerService
     ) {
-        super(["verify token"], verifyTokenRepository, req, logger);
+        super(["verify token"], verifyTokenRepository, undefined, logger);
     }
 
     async check(filter: FindConditions<VerifyToken>): Promise<boolean> {

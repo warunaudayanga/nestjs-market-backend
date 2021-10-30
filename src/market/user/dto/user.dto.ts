@@ -27,7 +27,6 @@ export class UserDto {
         this.firstName = userDto?.firstName;
         this.lastName = userDto?.lastName;
         this.image = userDto?.image;
-        this.nic = userDto?.nic.toUpperCase();
         this.dob = userDto?.dob;
         this.gender = userDto?.gender;
         this.position = userDto?.position;
@@ -45,10 +44,6 @@ export class UserDto {
     @IsUrl(undefined, toErrString(UserErrors.USER_400_INVALID_PROFILE_IMAGE))
     @ValidateIf(o => o.image !== "")
     image?: string;
-
-    @Matches(/^([0-9]{9}[xXvV]|[0-9]{12})$/, toErrString(UserErrors.USER_400_INVALID_NIC))
-    @IsNotEmpty(toErrString(UserErrors.USER_400_EMPTY_NIC))
-    nic: string;
 
     @IsDateString(undefined, toErrString(UserErrors.USER_400_INVALID_DOB))
     dob: Date;
