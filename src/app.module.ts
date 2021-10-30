@@ -17,6 +17,7 @@ import { DataModule } from "./market/data/data.module";
 import { PurchaseModule } from "./market/purchase/purchase.module";
 import { SupplierModule } from "./market/supplier/supplier.module";
 import { SaleModule } from "./market/sale/sale.module";
+// import { SeedingModule } from "./seeding/seeding.module";
 
 @Module({
     imports: [
@@ -26,6 +27,7 @@ import { SaleModule } from "./market/sale/sale.module";
         }),
         TypeOrmModule.forRoot(process.env.NODE_ENV === "production" ? prod : dev),
         CommonModule,
+        // SeedingModule,
         AuthModule,
         DataModule,
         UserModule,

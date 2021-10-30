@@ -42,6 +42,9 @@ export class AuthService extends Service<Auth>{
         if (err.errno === 1062 && err.sqlMessage?.match(/(for key 'users\.)/)) {
             return new HttpException(UserErrors.USER_409_EXIST_NIC, HttpStatus.CONFLICT);
         }
+        if (err.sqlMessage?.match(/(REFERENCES `positions`)/)) {
+            return new HttpException(UserErrors.USER_404_POSITION, HttpStatus.NOT_FOUND);
+        }
     }
 
     constructor(
@@ -51,7 +54,7 @@ export class AuthService extends Service<Auth>{
         private verifyTokenService: VerifyTokenService,
         private emailService: EmailService
     ) {
-        super(["auth", "email"], authRepository, undefined, logger);
+        super(["auth", isEmailVerification() ? "email" : "nic"], authRepository, undefined, logger);
     }
 
     public static getPrivateKey(): string {

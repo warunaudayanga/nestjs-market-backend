@@ -99,8 +99,8 @@ export class AuthController {
 
     @UseGuards(JwtAuthGuard)
     @Get("get")
-    get(@Query("user_id") user_id: string): Promise<Auth> {
-        return this.authService.get(user_id);
+    get(@Query("user_id") user_id: string, @Query("eager") eager?: boolean): Promise<Auth> {
+        return this.authService.get(user_id, { loadRelationIds: !eager });
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)
@@ -112,8 +112,8 @@ export class AuthController {
 
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Get("getAll")
-    getAll(): Promise<Auth[]> {
-        return this.authService.getAll();
+    getAll(@Query("eager") eager?: boolean): Promise<Auth[]> {
+        return this.authService.getAll({ loadRelationIds: !eager });
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)

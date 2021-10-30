@@ -39,7 +39,7 @@ export class User {
     @Column({ default: "" })
     phone?: string;
 
-    @Column("simple-json")
+    @Column("simple-json", { nullable: true })
     address?: Address;
 
     @CreateDateColumn({ insert: false, update: false })
