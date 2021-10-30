@@ -199,7 +199,7 @@ export class AuthService extends Service<Auth>{
             return {
                 token: tokenObject.token,
                 expiresIn: tokenObject.expires,
-                auth: authWithUser
+                user: authWithUser
             };
 
         } catch (err: any) {
