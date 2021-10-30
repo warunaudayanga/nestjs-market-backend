@@ -1,8 +1,8 @@
 import { Entity, Column, PrimaryGeneratedColumn, JoinColumn, OneToOne } from "typeorm";
-import { AuthType } from "../enums/auth.enums";
+import { StatusString, AuthType } from "../enums/auth.enums";
 import { User } from "../../market/user/entities/user.entity";
 import { CommonEntity } from "../../common/entity/entity";
-import { StatusString } from "../../common/entity/entity.enums";
+import { isEmailVerification } from "../../common/methods/common.methods";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface Auth extends CommonEntity { }
@@ -13,8 +13,13 @@ export class Auth {
     @PrimaryGeneratedColumn("uuid")
     id: string;
 
-    @Column({ unique: true })
+    @Column({ unique: true, nullable: !isEmailVerification() })
     email: string;
+
+    @Column({
+        unique: true
+    })
+    nic: string;
 
     @Column({ select: false })
     password?: string;

@@ -21,6 +21,6 @@ export class CommonDto extends CommonEntity {
 
     @decorate(IsOptional())
     @decorate(IsEnum(Object.values(StatusString), toErrString(CommonErrors.COMMON_400_INVALID_STATUS_STRING)))
-    statusString: StatusString;
+    statusString: StatusString | string;
 
 }

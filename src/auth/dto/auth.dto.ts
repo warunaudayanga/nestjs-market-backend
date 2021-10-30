@@ -9,12 +9,15 @@ export class AuthDto extends Auth {
         super();
         const cryptData = AuthService.generatePassword(registerDto.password);
         this.email = registerDto.email;
+        this.nic = registerDto?.nic.toUpperCase();
         this.password = cryptData.password;
         this.salt = cryptData.salt;
         this.profile = registerDto.getUserDto();
     }
 
     email: string;
+
+    nic: string;
 
     password: string;
 

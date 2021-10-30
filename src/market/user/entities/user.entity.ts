@@ -22,11 +22,6 @@ export class User {
     @Column({ default: "" })
     image?: string;
 
-    @Column({
-        unique: true
-    })
-    nic: string;
-
     @Column("date")
     dob: Date;
 

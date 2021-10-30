@@ -14,11 +14,6 @@ const UserErrors = {
         code: "USER_400_EMPTY_LAST_NAME",
         message: "User last name cannot be empty!"
     },
-    USER_400_EMPTY_NIC: {
-        status: 400,
-        code: "USER_400_EMPTY_NIC",
-        message: "User nic cannot be empty!"
-    },
     USER_400_EMPTY_POSITION: {
         status: 400,
         code: "USER_400_EMPTY_POSITION",
@@ -33,11 +28,6 @@ const UserErrors = {
         status: 400,
         code: "USER_400_INVALID_POSITION",
         message: "Invalid value for user position!"
-    },
-    USER_400_INVALID_NIC: {
-        status: 400,
-        code: "USER_400_INVALID_NIC",
-        message: "Invalid value for user nic!"
     },
     USER_400_INVALID_PROFILE_IMAGE: {
         status: 400,
