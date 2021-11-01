@@ -25,8 +25,8 @@ const applyName = (str: string, entityData: string[]): string => {
 };
 
 const paginate = (getAllDto: Partial<GetAllDto>): { skip: number, take: number } => {
-    const page = isNaN(Number(getAllDto.page)) && Number(getAllDto.page) > 0 ? getAllDto.page : undefined;
-    const limit = isNaN(Number(getAllDto.limit)) && Number(getAllDto.page) > 0 ? getAllDto.limit : undefined;
+    const page = !isNaN(Number(getAllDto.page)) && Number(getAllDto.page) > 0 ? getAllDto.page : undefined;
+    const limit = !isNaN(Number(getAllDto.limit)) && Number(getAllDto.page) > 0 ? getAllDto.limit : undefined;
     const skip = page && limit ? (page - 1) * limit : undefined;
     const take = page && limit ? limit : undefined;
     return { skip, take };

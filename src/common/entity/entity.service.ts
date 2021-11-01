@@ -222,8 +222,7 @@ export class Service<Entity extends CommonEntity> {
     }
 
     async getAll(getAllDto?: GetAllDto, options?: FindManyOptions<Entity>, eh?: (err: any) => Error | void): Promise<Entity[]> {
-        // { loadRelationIds: !eager, ...paginate(page, limit) }
-        const opt = options ? { ...options, ...getAllDto.getOptions() } : { ...getAllDto.getOptions() };
+        const opt = options ? { ...options, ...new GetAllDto(getAllDto).asOptions() } : { ...new GetAllDto(getAllDto).asOptions() };
         try {
             return await this.repository.find(opt);
         } catch (err: any) {

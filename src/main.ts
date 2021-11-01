@@ -18,7 +18,7 @@ async function bootstrap() {
     app.use(helmet());
     app.enableCors();
     // app.setViewEngine("");
-    app.useGlobalPipes(new ValidationPipe());
+    app.useGlobalPipes(new ValidationPipe({ transform: true }));
     app.setGlobalPrefix("api");
     await app.listen(process.env.PORT || 8080);
 }
