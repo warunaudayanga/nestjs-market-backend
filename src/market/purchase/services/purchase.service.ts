@@ -91,7 +91,7 @@ export class PurchaseService extends Service<Purchase> {
     async getInvoice(code: number, options?: FindOneOptions<Purchase>, eh?: (err: any) => (Error | void)): Promise<Partial<PurchaseInvoiceDto & CommonEntity>> {
         const opts = options ? options : {};
         opts.where = { code };
-        let purchases = await super.getAll(opts, eh);
+        let purchases = await super.getAll(undefined, opts, eh);
         if (purchases.length) {
             return this.getInvoiceDto(purchases);
         }
@@ -102,7 +102,7 @@ export class PurchaseService extends Service<Purchase> {
         const opts = options ? options : {};
         opts.order = { code: "ASC" };
         const purchaseInvoiceDtoList: Partial<PurchaseInvoiceDto & CommonEntity>[] = [];
-        let purchases = await super.getAll(opts);
+        let purchases = await super.getAll(undefined, opts);
         const codes: number[] = [];
         purchases.forEach(purchase => {
             const productDto = new PurchaseProductDto(purchase);
@@ -114,10 +114,6 @@ export class PurchaseService extends Service<Purchase> {
             }
         });
         return purchaseInvoiceDtoList;
-    }
-
-    getAll(options?: FindManyOptions): Promise<Purchase[]> {
-        return super.getAll(options);
     }
 
     deleteInvoice(code: number): Promise<SuccessDto> {

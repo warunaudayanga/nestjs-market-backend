@@ -9,6 +9,7 @@ import { AuthType } from "../../../auth/enums/auth.enums";
 import { Roles } from "../../../auth/decorators/roles.decorator";
 import { FindConditions } from "typeorm/find-options/FindConditions";
 import { CommonEntity } from "../../../common/entity/entity";
+import { GetAllDto } from "../../../common/dto/getAllDto";
 
 @Controller({ path: "sale", scope: Scope.REQUEST })
 export class SaleController {
@@ -37,8 +38,8 @@ export class SaleController {
 
     @UseGuards(JwtAuthGuard)
     @Get("getAll")
-    getAll(@Query("eager") eager?: boolean): Promise<Sale[]> {
-        return this.saleService.getAll({ loadRelationIds: !eager });
+    getAll(@Query() getAllDto: GetAllDto): Promise<Sale[]> {
+        return this.saleService.getAll(getAllDto);
     }
 
     @UseGuards(JwtAuthGuard)

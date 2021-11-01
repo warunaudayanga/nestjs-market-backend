@@ -8,6 +8,7 @@ import { Stock } from "../entities/stock.entity";
 import { AuthType } from "../../../auth/enums/auth.enums";
 import { Roles } from "../../../auth/decorators/roles.decorator";
 import { FindConditions } from "typeorm/find-options/FindConditions";
+import { GetAllDto } from "../../../common/dto/getAllDto";
 
 @Controller({ path: "stock", scope: Scope.REQUEST })
 export class StockController {
@@ -55,8 +56,8 @@ export class StockController {
 
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Get("getAll")
-    getAll(@Query("eager") eager?: boolean): Promise<Stock[]> {
-        return this.stockService.getAll({ loadRelationIds: !eager });
+    getAll(@Query() getAllDto: GetAllDto): Promise<Stock[]> {
+        return this.stockService.getAll(getAllDto);
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)

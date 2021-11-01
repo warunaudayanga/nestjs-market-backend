@@ -8,6 +8,7 @@ import { Position } from "../entities/position.entity";
 import { AuthType } from "../../../auth/enums/auth.enums";
 import { Roles } from "../../../auth/decorators/roles.decorator";
 import { FindConditions } from "typeorm/find-options/FindConditions";
+import { GetAllDto } from "../../../common/dto/getAllDto";
 
 @Controller({ path: "user/position", scope: Scope.REQUEST })
 export class PositionController {
@@ -55,8 +56,8 @@ export class PositionController {
     }
 
     @Get("getAll")
-    getAll(): Promise<Position[]> {
-        return this.positionService.getAll({ order: { name: "ASC" } });
+    getAll(@Query() getAllDto: GetAllDto): Promise<Position[]> {
+        return this.positionService.getAll(getAllDto);
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)

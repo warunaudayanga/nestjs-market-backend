@@ -8,6 +8,7 @@ import { Access } from "../entities/access.entity";
 import { AuthType } from "../../../auth/enums/auth.enums";
 import { Roles } from "../../../auth/decorators/roles.decorator";
 import { FindConditions } from "typeorm/find-options/FindConditions";
+import { GetAllDto } from "../../../common/dto/getAllDto";
 
 @Controller({ path: "access", scope: Scope.REQUEST })
 export class AccessController {
@@ -57,8 +58,8 @@ export class AccessController {
 
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Get("getAll")
-    getAll(@Query("eager") eager?: boolean): Promise<Access[]> {
-        return this.accessService.getAll({ loadRelationIds: !eager });
+    getAll(@Query() getAllDto: GetAllDto): Promise<Access[]> {
+        return this.accessService.getAll(getAllDto);
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)

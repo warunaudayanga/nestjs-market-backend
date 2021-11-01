@@ -14,6 +14,7 @@ import { Auth } from "./entities/auth.entity";
 import { FindConditions } from "typeorm";
 import { ChangePasswordDto } from "./dto/change-password.dto";
 import { RegisterDto } from "./dto/register.dto";
+import { GetAllDto } from "../common/dto/getAllDto";
 
 @Controller({ path: "auth", scope: Scope.REQUEST })
 export class AuthController {
@@ -112,8 +113,8 @@ export class AuthController {
 
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Get("getAll")
-    getAll(@Query("eager") eager?: boolean): Promise<Auth[]> {
-        return this.authService.getAll({ loadRelationIds: !eager });
+    getAll(@Query() getAllDto: GetAllDto): Promise<Auth[]> {
+        return this.authService.getAll(getAllDto);
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)

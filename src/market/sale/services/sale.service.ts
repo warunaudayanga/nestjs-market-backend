@@ -93,7 +93,7 @@ export class SaleService extends Service<Sale> {
     async getInvoice(code: number, options?: FindOneOptions<Sale>, eh?: (err: any) => (Error | void)): Promise<Partial<SaleInvoiceDto & CommonEntity>> {
         const opts = options ? options : {};
         opts.where = { code };
-        let sales = await super.getAll(opts, eh);
+        let sales = await super.getAll(undefined, opts, eh);
         if (sales.length) {
             return this.getInvoiceDto(sales);
         }
@@ -104,7 +104,7 @@ export class SaleService extends Service<Sale> {
         const opts = options ? options : {};
         opts.order = { code: "ASC" };
         const saleInvoiceDtoList: Partial<SaleInvoiceDto & CommonEntity>[] = [];
-        let sales = await super.getAll(opts);
+        let sales = await super.getAll(undefined, opts);
         const codes: number[] = [];
         sales.forEach(sale => {
             const stockDto = new SaleStockDto(sale);
@@ -116,10 +116,6 @@ export class SaleService extends Service<Sale> {
             }
         });
         return saleInvoiceDtoList;
-    }
-
-    getAll(options?: FindManyOptions): Promise<Sale[]> {
-        return super.getAll(options);
     }
 
     deleteInvoice(code: number): Promise<SuccessDto> {

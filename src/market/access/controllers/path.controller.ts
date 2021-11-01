@@ -8,6 +8,7 @@ import { Path } from "../entities/path.entity";
 import { AuthType } from "../../../auth/enums/auth.enums";
 import { Roles } from "../../../auth/decorators/roles.decorator";
 import { FindConditions } from "typeorm/find-options/FindConditions";
+import { GetAllDto } from "../../../common/dto/getAllDto";
 
 @Controller({ path: "access/path", scope: Scope.REQUEST })
 export class PathController {
@@ -57,8 +58,8 @@ export class PathController {
 
     @UseGuards(JwtAuthGuard)
     @Get("getAll")
-    getAll(): Promise<Path[]> {
-        return this.pathService.getAll();
+    getAll(@Query() getAllDto: GetAllDto): Promise<Path[]> {
+        return this.pathService.getAll(getAllDto);
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)

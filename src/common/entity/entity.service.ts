@@ -11,6 +11,7 @@ import { toFirstCase } from "./entity.methods";
 import { Err, Errors } from "./entity.errors";
 import { DataService } from "../../market/data/services/data.service";
 import { returnError } from "../methods/errors";
+import { GetAllDto } from "../dto/getAllDto";
 
 export class Service<Entity extends CommonEntity> {
 
@@ -220,9 +221,11 @@ export class Service<Entity extends CommonEntity> {
         return await this.getOne(id, options, eh);
     }
 
-    async getAll(options?: FindManyOptions<Entity>, eh?: (err: any) => Error | void): Promise<Entity[]> {
+    async getAll(getAllDto?: GetAllDto, options?: FindManyOptions<Entity>, eh?: (err: any) => Error | void): Promise<Entity[]> {
+        // { loadRelationIds: !eager, ...paginate(page, limit) }
+        const opt = options ? { ...options, ...getAllDto.getOptions() } : { ...getAllDto.getOptions() };
         try {
-            return await this.repository.find(options);
+            return await this.repository.find(opt);
         } catch (err: any) {
             if (eh) {
                 const e = eh(err);
