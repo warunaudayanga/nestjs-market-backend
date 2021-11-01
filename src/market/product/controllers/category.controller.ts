@@ -9,6 +9,7 @@ import { AuthType } from "../../../auth/enums/auth.enums";
 import { Roles } from "../../../auth/decorators/roles.decorator";
 import { FindConditions } from "typeorm/find-options/FindConditions";
 import { GetAllDto } from "../../../common/dto/getAllDto";
+import { GetAllResponse } from "../../../common/entity/entity.interfaces";
 
 @Controller({ path: "product/category", scope: Scope.REQUEST })
 export class CategoryController {
@@ -58,7 +59,7 @@ export class CategoryController {
 
     @UseGuards(JwtAuthGuard)
     @Get("getAll")
-    getAll(@Query() getAllDto: GetAllDto): Promise<Category[]> {
+    getAll(@Query() getAllDto: GetAllDto): Promise<GetAllResponse<Category>> {
         return this.categoryService.getAll(getAllDto);
     }
 

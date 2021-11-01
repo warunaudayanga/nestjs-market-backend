@@ -16,6 +16,9 @@ import { PurchaseInvoiceDto } from "../dto/purchase-invoice.dto";
 import { PurchaseProductDto } from "../dto/purchase-product.dto";
 import { Stock } from "../../stock/entities/stock.entity";
 import { returnError } from "../../../common/methods/errors";
+import { GetAllDto } from "../../../common/dto/getAllDto";
+import { paginate, toNumber } from "../../../common/entity/entity.methods";
+import { GetAllResponse } from "../../../common/entity/entity.interfaces";
 
 @Injectable({ scope: Scope.REQUEST })
 export class PurchaseService extends Service<Purchase> {
@@ -92,10 +95,23 @@ export class PurchaseService extends Service<Purchase> {
         const opts = options ? options : {};
         opts.where = { code };
         let purchases = await super.getAll(undefined, opts, eh);
-        if (purchases.length) {
-            return this.getInvoiceDto(purchases);
+        if (purchases.entities.length) {
+            return this.getInvoiceDto(purchases.entities);
         }
         throw this.gerError(Err.E_404_K);
+    }
+
+    async getInvoiceList(getAllDto?: GetAllDto): Promise<GetAllResponse<Purchase>> {
+        const pagination = paginate(getAllDto);
+        const purchases = await this.purchaseRepository
+            .createQueryBuilder()
+            .groupBy("code")
+            .orderBy("code")
+            .skip(pagination.skip)
+            .take(pagination.take)
+            .loadAllRelationIds()
+            .getManyAndCount();
+        return { entities: purchases[0], total: purchases[1], page: toNumber(getAllDto?.page), limit: toNumber(getAllDto?.limit) };
     }
 
     async getAllInvoices(options?: FindManyOptions): Promise<(Partial<PurchaseInvoiceDto & CommonEntity>[])> {
@@ -104,7 +120,7 @@ export class PurchaseService extends Service<Purchase> {
         const purchaseInvoiceDtoList: Partial<PurchaseInvoiceDto & CommonEntity>[] = [];
         let purchases = await super.getAll(undefined, opts);
         const codes: number[] = [];
-        purchases.forEach(purchase => {
+        purchases.entities.forEach(purchase => {
             const productDto = new PurchaseProductDto(purchase);
             if (!codes.includes(purchase.code)) {
                 purchaseInvoiceDtoList.push(new PurchaseInvoiceDto(purchase, [productDto]));

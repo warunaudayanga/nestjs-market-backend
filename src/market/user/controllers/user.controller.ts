@@ -9,6 +9,7 @@ import { AuthType } from "../../../auth/enums/auth.enums";
 import { Roles } from "../../../auth/decorators/roles.decorator";
 import { FindConditions } from "typeorm/find-options/FindConditions";
 import { GetAllDto } from "../../../common/dto/getAllDto";
+import { GetAllResponse } from "../../../common/entity/entity.interfaces";
 
 @Controller({ path: "user", scope: Scope.REQUEST })
 export class UserController {
@@ -43,7 +44,7 @@ export class UserController {
 
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Get("getAll")
-    getAll(@Query() getAllDto: GetAllDto): Promise<User[]> {
+    getAll(@Query() getAllDto: GetAllDto): Promise<GetAllResponse<User>> {
         return this.userService.getAll(getAllDto);
     }
 

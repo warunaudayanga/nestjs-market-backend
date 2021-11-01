@@ -10,6 +10,7 @@ import { Roles } from "../../../auth/decorators/roles.decorator";
 import { FindConditions } from "typeorm/find-options/FindConditions";
 import { CommonEntity } from "../../../common/entity/entity";
 import { GetAllDto } from "../../../common/dto/getAllDto";
+import { GetAllResponse } from "../../../common/entity/entity.interfaces";
 
 @Controller({ path: "sale", scope: Scope.REQUEST })
 export class SaleController {
@@ -38,7 +39,7 @@ export class SaleController {
 
     @UseGuards(JwtAuthGuard)
     @Get("getAll")
-    getAll(@Query() getAllDto: GetAllDto): Promise<Sale[]> {
+    getAll(@Query() getAllDto: GetAllDto): Promise<GetAllResponse<Sale>> {
         return this.saleService.getAll(getAllDto);
     }
 
@@ -46,6 +47,12 @@ export class SaleController {
     @Get("getInvoice")
     getInvoice(@Query("code") code: number, @Query("eager") eager?: boolean): Promise<Partial<SaleInvoiceDto & CommonEntity>> {
         return this.saleService.getInvoice(code, { loadRelationIds: !eager });
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get("getInvoiceList")
+    getInvoiceList(@Query() getAllDto: GetAllDto): Promise<GetAllResponse<Sale>> {
+        return this.saleService.getInvoiceList(getAllDto);
     }
 
     @UseGuards(JwtAuthGuard)

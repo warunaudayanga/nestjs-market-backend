@@ -7,11 +7,12 @@ import { LoggerService } from "../services/logger.service";
 import { CommonEntity } from "./entity";
 import { SuccessDto } from "./entity.success.dto";
 import { StatusString } from "./entity.enums";
-import { toFirstCase } from "./entity.methods";
+import { toFirstCase, toNumber } from "./entity.methods";
 import { Err, Errors } from "./entity.errors";
 import { DataService } from "../../market/data/services/data.service";
 import { returnError } from "../methods/errors";
 import { GetAllDto } from "../dto/getAllDto";
+import { GetAllResponse } from "./entity.interfaces";
 
 export class Service<Entity extends CommonEntity> {
 
@@ -221,10 +222,13 @@ export class Service<Entity extends CommonEntity> {
         return await this.getOne(id, options, eh);
     }
 
-    async getAll(getAllDto?: GetAllDto, options?: FindManyOptions<Entity>, eh?: (err: any) => Error | void): Promise<Entity[]> {
-        const opt = options ? { ...options, ...new GetAllDto(getAllDto).asOptions() } : { ...new GetAllDto(getAllDto).asOptions() };
+    async getAll(getAllDto?: GetAllDto, options?: FindManyOptions<Entity>, eh?: (err: any) => Error | void): Promise<GetAllResponse<Entity>> {
+        const getAllOpts = getAllDto ? new GetAllDto(getAllDto).asOptions() : {};
+        const opt = options ? { ...options, ...getAllOpts } : { ...getAllOpts };
         try {
-            return await this.repository.find(opt);
+            const entities = await this.repository.find(opt);
+            const total = await this.repository.count();
+            return { entities, total, page: toNumber(getAllDto?.page), limit: toNumber(getAllDto?.limit) };
         } catch (err: any) {
             if (eh) {
                 const e = eh(err);

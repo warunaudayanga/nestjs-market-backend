@@ -15,6 +15,7 @@ import { FindConditions } from "typeorm";
 import { ChangePasswordDto } from "./dto/change-password.dto";
 import { RegisterDto } from "./dto/register.dto";
 import { GetAllDto } from "../common/dto/getAllDto";
+import { GetAllResponse } from "../common/entity/entity.interfaces";
 
 @Controller({ path: "auth", scope: Scope.REQUEST })
 export class AuthController {
@@ -113,7 +114,7 @@ export class AuthController {
 
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Get("getAll")
-    getAll(@Query() getAllDto: GetAllDto): Promise<Auth[]> {
+    getAll(@Query() getAllDto: GetAllDto): Promise<GetAllResponse<Auth>> {
         return this.authService.getAll(getAllDto);
     }
 

@@ -24,12 +24,16 @@ const applyName = (str: string, entityData: string[]): string => {
         .replace("{{upperConflict}}", conflict ? conflict.toUpperCase() : "UNIQUE");
 };
 
-const paginate = (getAllDto: Partial<GetAllDto>): { skip: number, take: number } => {
-    const page = !isNaN(Number(getAllDto.page)) && Number(getAllDto.page) > 0 ? getAllDto.page : undefined;
-    const limit = !isNaN(Number(getAllDto.limit)) && Number(getAllDto.page) > 0 ? getAllDto.limit : undefined;
+const toNumber = (n: number | string): number => {
+    return !isNaN(Number(n)) ? Number(n) : undefined;
+};
+
+const paginate = (getAllDto?: Partial<GetAllDto>): { skip: number, take: number } => {
+    const page = toNumber(getAllDto?.page);
+    const limit = toNumber(getAllDto?.limit);
     const skip = page && limit ? (page - 1) * limit : undefined;
     const take = page && limit ? limit : undefined;
     return { skip, take };
 };
 
-export { omit, toFirstCase, applyName, paginate };
+export { omit, toFirstCase, applyName, paginate, toNumber };

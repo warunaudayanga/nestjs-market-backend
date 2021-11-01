@@ -17,6 +17,9 @@ import { SaleStockDto } from "../dto/sale-stock.dto";
 import { StockService } from "../../stock/services/stock.service";
 import { Stock } from "../../stock/entities/stock.entity";
 import { returnError } from "../../../common/methods/errors";
+import { GetAllDto } from "../../../common/dto/getAllDto";
+import { paginate, toNumber } from "../../../common/entity/entity.methods";
+import { GetAllResponse } from "../../../common/entity/entity.interfaces";
 
 @Injectable({ scope: Scope.REQUEST })
 export class SaleService extends Service<Sale> {
@@ -94,10 +97,22 @@ export class SaleService extends Service<Sale> {
         const opts = options ? options : {};
         opts.where = { code };
         let sales = await super.getAll(undefined, opts, eh);
-        if (sales.length) {
-            return this.getInvoiceDto(sales);
+        if (sales.entities.length) {
+            return this.getInvoiceDto(sales.entities);
         }
         throw this.gerError(Err.E_404_K);
+    }
+
+    async getInvoiceList(getAllDto?: GetAllDto): Promise<GetAllResponse<Sale>> {
+        const pagination = paginate(getAllDto);
+        const purchases = await this.saleRepository
+            .createQueryBuilder()
+            .groupBy("code")
+            .orderBy("code")
+            .skip(pagination.skip)
+            .take(pagination.take)
+            .getManyAndCount();
+        return { entities: purchases[0], total: purchases[1], page: toNumber(getAllDto?.page), limit: toNumber(getAllDto?.limit) };
     }
 
     async getAllInvoices(options?: FindManyOptions): Promise<(Partial<SaleInvoiceDto & CommonEntity>[])> {
@@ -106,7 +121,7 @@ export class SaleService extends Service<Sale> {
         const saleInvoiceDtoList: Partial<SaleInvoiceDto & CommonEntity>[] = [];
         let sales = await super.getAll(undefined, opts);
         const codes: number[] = [];
-        sales.forEach(sale => {
+        sales.entities.forEach(sale => {
             const stockDto = new SaleStockDto(sale);
             if (!codes.includes(sale.code)) {
                 saleInvoiceDtoList.push(new SaleInvoiceDto(sale, [stockDto]));
