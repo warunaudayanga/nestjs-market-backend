@@ -1,5 +1,5 @@
 import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
-import { DeepPartial, FindConditions, FindManyOptions, FindOneOptions, SaveOptions } from "typeorm";
+import { DeepPartial, FindConditions, FindManyOptions, FindOneOptions, getConnection, SaveOptions } from "typeorm";
 import { HttpException } from "@nestjs/common";
 import { Request } from "express";
 import { CommonRepository, ReqAuth } from "./entity.repository";
@@ -13,6 +13,7 @@ import { DataService } from "../../market/data/services/data.service";
 import { returnError } from "../methods/errors";
 import { GetAllDto } from "../dto/getAllDto";
 import { GetAllResponse } from "./entity.interfaces";
+import { Auth } from "../../auth/entities/auth.entity";
 
 export class Service<Entity extends CommonEntity> {
 
@@ -219,7 +220,25 @@ export class Service<Entity extends CommonEntity> {
         if (!id) {
             return Promise.reject(this.gerError(Err.E_400_EMPTY_ID));
         }
-        return await this.getOne(id, options, eh);
+        const entity = await this.getOne(id, options, eh);
+        const manager = getConnection().createQueryRunner().manager;
+        if (entity.createdBy) {
+            const creator = await manager.findOne(Auth, { where: { id: entity.createdBy } } );
+            entity.createdBy = {
+                id: creator.id,
+                firstName: creator.profile.firstName,
+                lastName: creator.profile.lastName
+            };
+        }
+        if (entity.updatedBy) {
+            const updater = await manager.findOne(Auth, { where: { id: entity.updatedBy } } );
+            entity.updatedBy = {
+                id: updater.id,
+                firstName: updater.profile.firstName,
+                lastName: updater.profile.lastName
+            };
+        }
+        return entity;
     }
 
     async getAll(getAllDto?: GetAllDto, options?: FindManyOptions<Entity>, eh?: (err: any) => Error | void): Promise<GetAllResponse<Entity>> {
@@ -227,6 +246,25 @@ export class Service<Entity extends CommonEntity> {
         const opt = options ? { ...options, ...getAllOpts } : { ...getAllOpts };
         try {
             const entities = await this.repository.find(opt);
+            const manager = getConnection().createQueryRunner().manager;
+            for await (const entity of entities) {
+                if (entity.createdBy) {
+                    const creator = await manager.findOne(Auth, { where: { id: entity.createdBy } } );
+                    entity.createdBy = {
+                        id: creator.id,
+                        firstName: creator.profile.firstName,
+                        lastName: creator.profile.lastName
+                    };
+                }
+                if (entity.updatedBy) {
+                    const updater = await manager.findOne(Auth, { where: { id: entity.updatedBy } } );
+                    entity.updatedBy = {
+                        id: updater.id,
+                        firstName: updater.profile.firstName,
+                        lastName: updater.profile.lastName
+                    };
+                }
+            }
             const total = await this.repository.count();
             return { entities, total, page: toNumber(getAllDto?.page), limit: toNumber(getAllDto?.limit) };
         } catch (err: any) {

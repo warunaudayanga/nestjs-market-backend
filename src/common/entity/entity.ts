@@ -1,6 +1,7 @@
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Auth } from "../../auth/entities/auth.entity";
 import { StatusString } from "./entity.enums";
+import { UserInfo } from "./entity.interfaces";
 
 @Entity({ synchronize: false })
 export class CommonEntity {
@@ -27,15 +28,14 @@ export class CommonEntity {
     statusString: StatusString | string;
 
     @ManyToOne(() => Auth)
-    @JoinColumn()
-    createdBy: string;
+    createdBy: UserInfo | string;
 
     @CreateDateColumn({ insert: false, update: false })
     createdAt: Date;
 
     @ManyToOne(() => Auth)
     @JoinColumn()
-    updatedBy: string;
+    updatedBy: UserInfo | string;
 
     @Column({
         type: "datetime",

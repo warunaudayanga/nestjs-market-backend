@@ -12,6 +12,7 @@ export class Access extends CommonEntity {
     auth: string;
 
     @ManyToOne(() => Path, { eager: true })
+    @JoinColumn()
     path: Path | string;
 
     @Column("simple-json")
