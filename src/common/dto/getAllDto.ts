@@ -17,7 +17,7 @@ export class GetAllDto {
         this.limit = getAllDto?.limit;
         this.eager = getAllDto?.eager;
         this.sort = getAllDto?.sort;
-        this.direction = getAllDto?.direction ? getAllDto?.direction : "ASC";
+        this.direction = getAllDto?.direction || "ASC";
     }
 
     asOptions(): { loadRelationIds: boolean, order: { [key: string]: "ASC" | "DESC" } | undefined, skip: number, take: number} {
