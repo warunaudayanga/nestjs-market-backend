@@ -26,8 +26,8 @@ export class PurchaseController {
 
     @UseGuards(JwtAuthGuard)
     @Get("get")
-    get(@Query("id") id: string, @Query("eager") eager?: boolean): Promise<Purchase> {
-        return this.purchaseService.get(id, { loadRelationIds: !eager });
+    get(@Query("id") id: string, @Query("eager") eager?: "true" | "false"): Promise<Purchase> {
+        return this.purchaseService.get(id, { loadRelationIds: eager !== "true" });
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)
@@ -45,8 +45,8 @@ export class PurchaseController {
 
     @UseGuards(JwtAuthGuard)
     @Get("getInvoice")
-    getInvoice(@Query("code") code: number, @Query("eager") eager?: boolean): Promise<Partial<PurchaseInvoiceDto & CommonEntity>> {
-        return this.purchaseService.getInvoice(code, { loadRelationIds: !eager });
+    getInvoice(@Query("code") code: number, @Query("eager") eager?: "true" | "false"): Promise<Partial<PurchaseInvoiceDto & CommonEntity>> {
+        return this.purchaseService.getInvoice(code, { loadRelationIds: eager !== "true" });
     }
 
     @UseGuards(JwtAuthGuard)
@@ -57,8 +57,8 @@ export class PurchaseController {
 
     @UseGuards(JwtAuthGuard)
     @Get("getAllInvoices")
-    getAllInvoices(@Query("eager") eager?: boolean): Promise<Partial<PurchaseInvoiceDto & CommonEntity>[]> {
-        return this.purchaseService.getAllInvoices({ loadRelationIds: !eager });
+    getAllInvoices(@Query("eager") eager?: "true" | "false"): Promise<Partial<PurchaseInvoiceDto & CommonEntity>[]> {
+        return this.purchaseService.getAllInvoices({ loadRelationIds: eager !== "true" });
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)

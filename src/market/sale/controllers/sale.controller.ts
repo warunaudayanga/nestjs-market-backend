@@ -26,8 +26,8 @@ export class SaleController {
 
     @UseGuards(JwtAuthGuard)
     @Get("get")
-    get(@Query("id") id: string, @Query("eager") eager?: boolean): Promise<Sale> {
-        return this.saleService.get(id, { loadRelationIds: !eager });
+    get(@Query("id") id: string, @Query("eager") eager?: "true" | "false"): Promise<Sale> {
+        return this.saleService.get(id, { loadRelationIds: eager !== "true" });
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)
@@ -45,8 +45,8 @@ export class SaleController {
 
     @UseGuards(JwtAuthGuard)
     @Get("getInvoice")
-    getInvoice(@Query("code") code: number, @Query("eager") eager?: boolean): Promise<Partial<SaleInvoiceDto & CommonEntity>> {
-        return this.saleService.getInvoice(code, { loadRelationIds: !eager });
+    getInvoice(@Query("code") code: number, @Query("eager") eager?: "true" | "false"): Promise<Partial<SaleInvoiceDto & CommonEntity>> {
+        return this.saleService.getInvoice(code, { loadRelationIds: eager !== "true" });
     }
 
     @UseGuards(JwtAuthGuard)
@@ -57,8 +57,8 @@ export class SaleController {
 
     @UseGuards(JwtAuthGuard)
     @Get("getAllInvoices")
-    getAllInvoices(@Query("eager") eager?: boolean): Promise<Partial<SaleInvoiceDto & CommonEntity>[]> {
-        return this.saleService.getAllInvoices({ loadRelationIds: !eager });
+    getAllInvoices(@Query("eager") eager?: "true" | "false"): Promise<Partial<SaleInvoiceDto & CommonEntity>[]> {
+        return this.saleService.getAllInvoices({ loadRelationIds: eager !== "true" });
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)

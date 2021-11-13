@@ -44,8 +44,8 @@ export class StockController {
 
     @UseGuards(JwtAuthGuard)
     @Get("get")
-    get(@Query("id") id: string, @Query("eager") eager?: boolean): Promise<Stock> {
-        return this.stockService.get(id, { loadRelationIds: !eager });
+    get(@Query("id") id: string, @Query("eager") eager?: "true" | "false"): Promise<Stock> {
+        return this.stockService.get(id, { loadRelationIds: eager !== "true" });
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)

@@ -101,8 +101,8 @@ export class AuthController {
 
     @UseGuards(JwtAuthGuard)
     @Get("get")
-    get(@Query("user_id") user_id: string, @Query("eager") eager?: boolean): Promise<Auth> {
-        return this.authService.get(user_id, { loadRelationIds: !eager });
+    get(@Query("user_id") user_id: string, @Query("eager") eager?: "true" | "false"): Promise<Auth> {
+        return this.authService.get(user_id, { loadRelationIds: eager !== "true" });
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)

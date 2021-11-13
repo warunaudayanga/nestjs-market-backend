@@ -6,11 +6,11 @@ export class GetAllDto {
 
     limit?: number;
 
-    eager?: boolean;
+    eager?: "true" | "false";
 
     sort?: string;
 
-    desc?: boolean;
+    desc?: "true" | "false";
 
     constructor(getAllDto?: GetAllDto) {
         this.page = getAllDto?.page;
@@ -24,9 +24,9 @@ export class GetAllDto {
         let order;
         if (this.sort) {
             order = {};
-            order[this.sort] = this.desc ? "DESC" : "ASC";
+            order[this.sort] = this.desc === "true" ? "DESC" : "ASC";
         }
-        return { loadRelationIds: !this.eager, order, ...paginate({ page: this.page, limit: this.limit }) };
+        return { loadRelationIds: this.eager !== "true", order, ...paginate({ page: this.page, limit: this.limit }) };
     }
 
 }

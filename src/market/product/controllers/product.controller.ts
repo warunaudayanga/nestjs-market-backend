@@ -46,8 +46,8 @@ export class ProductController {
 
     @UseGuards(JwtAuthGuard)
     @Get("get")
-    get(@Query("id") id: string, @Query("eager") eager?: boolean): Promise<Product> {
-        return this.productService.get(id, { loadRelationIds: !eager });
+    get(@Query("id") id: string, @Query("eager") eager?: "true" | "false"): Promise<Product> {
+        return this.productService.get(id, { loadRelationIds: eager !== "true" });
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)
