@@ -10,21 +10,21 @@ export class GetAllDto {
 
     sort?: string;
 
-    direction?: "ASC" | "DESC";
+    desc?: boolean;
 
     constructor(getAllDto?: GetAllDto) {
         this.page = getAllDto?.page;
         this.limit = getAllDto?.limit;
         this.eager = getAllDto?.eager;
         this.sort = getAllDto?.sort;
-        this.direction = getAllDto?.direction || "ASC";
+        this.desc = getAllDto?.desc;
     }
 
     asOptions(): { loadRelationIds: boolean, order: { [key: string]: "ASC" | "DESC" } | undefined, skip: number, take: number} {
         let order;
         if (this.sort) {
             order = {};
-            order[this.sort] = this.direction;
+            order[this.sort] = this.desc ? "DESC" : "ASC";
         }
         return { loadRelationIds: !this.eager, order, ...paginate({ page: this.page, limit: this.limit }) };
     }
