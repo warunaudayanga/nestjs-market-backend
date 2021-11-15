@@ -4,7 +4,7 @@ import { ValidationPipe } from "@nestjs/common";
 import { AllExceptionsFilter } from "./common/filters/http-exception.filter";
 import { LoggerService } from "./common/services/logger.service";
 import { AppModule } from "./app.module";
-import * as helmet from "helmet";
+// import * as helmet from "helmet";
 import * as cookieParser from "cookie-parser";
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type,func-style
@@ -13,8 +13,13 @@ async function bootstrap() {
     const { httpAdapter } = app.get(HttpAdapterHost);
     app.useGlobalFilters(new AllExceptionsFilter(httpAdapter));
     app.use(cookieParser());
-    app.use(helmet());
-    app.enableCors();
+    // app.use(helmet());
+    app.enableCors({
+        origin: "*",
+        methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+        preflightContinue: false,
+        optionsSuccessStatus: 204
+    });
     // app.setViewEngine("");
     app.useGlobalPipes(new ValidationPipe({ transform: true }));
     app.setGlobalPrefix("api");
