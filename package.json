@@ -20,9 +20,8 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "copy:assets": "cpx src/public/**/* dist/public --watch",
-    "copy-front": "cpx angular/dist/public/**/* dist/public",
-    "heroku-prebuild": "npm install --prefix angular && npm install",
-    "heroku-postbuild": "npm run build --prefix angular && npm run build && npm run copy-front"
+    "heroku-prebuild": "npm install && npm install --prefix angular",
+    "heroku-postbuild": "npm run build && npm run build:prod --prefix angular"
   },
   "dependencies": {
     "@nestjs/common": "^8.0.0",
