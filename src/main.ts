@@ -14,12 +14,7 @@ async function bootstrap() {
     app.useGlobalFilters(new AllExceptionsFilter(httpAdapter));
     app.use(cookieParser());
     // app.use(helmet());
-    app.enableCors({
-        origin: "*",
-        methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-        preflightContinue: false,
-        optionsSuccessStatus: 204
-    });
+    app.enableCors();
     // app.setViewEngine("");
     app.useGlobalPipes(new ValidationPipe({ transform: true }));
     app.setGlobalPrefix("api");
