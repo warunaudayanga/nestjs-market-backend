@@ -21,8 +21,8 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "copy:assets": "cpx src/public/**/* dist/public --watch",
     "copy-front": "cpx angular/dist/public/**/* dist/public",
-    "heroku-prebuild": "npm install --prefix angular && npm install",
-    "heroku-postbuild": "npm run build --prefix angular && npm run build && npm run copy-front"
+    "heroku-prebuild": "npm install && cd angular && npm install",
+    "heroku-postbuild": "npm run build && cd angular && npm install && npm run copy-front"
   },
   "dependencies": {
     "@nestjs/common": "^8.0.0",
