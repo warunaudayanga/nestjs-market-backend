@@ -1,0 +1,50 @@
+@import "src/global-vars";
+
+:host {
+    display: block;
+    height: 100%;
+    background-color: $app-secondary-color;
+}
+.menu {
+    padding-top: 10px;
+}
+.menu-item {
+    * {
+        color: $app-text-invert-color;
+    }
+    .menu-item-text {
+        &:hover {
+            background-color: $app-primary-color;
+            cursor: pointer;
+            * {
+                color: $app-text-select-color;
+            }
+        }
+        &.active {
+            background-color: $app-primary-color;
+            * {
+                color: $app-text-invert-color;
+            }
+        }
+        padding: 10px 20px;
+        .icon {
+            font-size: 25px;
+        }
+        .title {
+            font-size: 20px;
+            margin-left: 10px;
+        }
+    }
+    .sub-menu .menu-item-text {
+        padding-left: 40px;
+        .icon {
+            font-size: 20px;
+        }
+        .title {
+            font-size: 17px;
+        }
+    }
+}
+//mat-divider {
+//    background-color: var(--border-color);
+//}

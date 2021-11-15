@@ -1,0 +1,33 @@
+@import "src/global-vars";
+
+:host {
+    //margin-left: auto;
+}
+.avatar-container {
+    background-size: contain;
+    height: 54px;
+    width: 54px;
+    align-self: center;
+    margin-right: 10px;
+    background-color: $app-text-invert-color;
+    border: 2px solid $app-text-invert-color;
+    border-radius: 50%;
+    cursor: pointer;
+    .avatar {
+        position: relative;
+        height: 50px;
+        width: 50px;
+        border-radius: 50%;
+    }
+}
+
+[mat-menu-item] {
+    display: flex;
+    height: 30px;
+    line-height: revert;
+    align-items: center;
+    i {
+        font-size: 18px;
+        padding-right: 5px;
+    }
+}

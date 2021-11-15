@@ -1,0 +1,12 @@
+<div class="dashboard-card {{theme}}" style="{{'height: ' + height}}">
+    <div class="left">
+        <h5 class="title">{{title !== undefined? title: '&nbsp;'}}</h5>
+        <span class="number">{{count | number: '1.0'}}</span>
+        <a *ngIf="buttonName" routerLink="{{buttonLink}}" class="link">{{buttonName}}</a>
+    </div>
+    <div class="right">
+        <div class="icon">
+            <i class="{{icon}}"></i>
+        </div>
+    </div>
+</div>

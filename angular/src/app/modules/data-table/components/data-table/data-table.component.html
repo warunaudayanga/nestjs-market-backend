@@ -1,0 +1,34 @@
+<table class="table data-table paginated-table">
+    <thead>
+    <tr>
+        <th *ngFor="let heading of tableData.headers, let i = index" [style]="getStyle(i)">{{heading}}</th>
+        <th *ngIf="tableData.option" scope="col" class="data-table-options">
+            <button class="btn btn-sm btn-option {{getColorClass()}}"
+                    (click)="onOption()"
+                    [innerHTML]="getInnerHTML()"
+                    [disabled]="getDisabled()"></button>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    <ng-container *ngIf="tableData.dataSource">
+        <tr *ngFor="let item of tableData.dataSource | paginate: tableData.pagination">
+            <td *ngFor="let key of tableData.keys, let i = index" [style]="getStyle(i)">{{getValue(item, i, key)}}</td>
+            <td class="data-table-options" *ngIf="tableData.option" [style]="'width: ' + (tableData.option?.width ?? 'auto')">
+                <ng-container *ngFor="let option of tableData.option?.common, let i = index">
+                    <button class="btn btn-sm btn-option {{getColorClass(i)}}"
+                            (click)="onOption(item, i)"
+                            [innerHTML]="getInnerHTML(i)"
+                            [disabled]="getDisabled(i)"></button>
+                </ng-container>
+            </td>
+        </tr>
+    </ng-container>
+    </tbody>
+</table>
+
+<div *ngIf="loading" class="loading-backdrop position-absolute">
+    <div class="loading"></div>
+</div>
+
+<app-pagination (pageChange)="changePage($event)"></app-pagination>

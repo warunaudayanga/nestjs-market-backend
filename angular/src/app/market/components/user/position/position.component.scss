@@ -1,0 +1,25 @@
+@import "src/global-vars";
+
+table {
+    td, th {
+        vertical-align: middle;
+        &:nth-child(1) {
+
+        }
+        &:nth-child(2) {
+            width: 100px;
+            text-align: center;
+        }
+        &:nth-child(3) {
+            width: 100px;
+            text-align: center;
+        }
+        &:nth-child(4) {
+            width: 100px;
+        }
+        &:nth-child(5) {
+            width: 100px;
+            text-align: center;
+        }
+    }
+}

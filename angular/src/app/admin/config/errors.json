@@ -1,0 +1,402 @@
+[
+    {
+        "time": "8/26/2021, 2:08:12 PM",
+        "logObject": {
+            "instanceName": "DESKTOP-224S48K",
+            "hostname": "DESKTOP-224S48K",
+            "date": "2021-08-26T08:38:12.694Z",
+            "logLevel": "error",
+            "logLevelId": 5,
+            "filePath": "src\\util\\logger.ts",
+            "fullFilePath": "E:\\Web\\Node\\market-backend\\src\\util\\logger.ts",
+            "fileName": "logger.ts",
+            "lineNumber": 55,
+            "columnNumber": 21,
+            "isConstructor": false,
+            "functionName": "log",
+            "typeName": "Function",
+            "methodName": "log",
+            "argumentsArray": [
+                {
+                    "details": {},
+                    "name": "Error",
+                    "isError": true,
+                    "message": "I am a pretty Error with a stacktrace.",
+                    "stack": [
+                        {
+                            "filePath": "src\\app.ts",
+                            "fullFilePath": "E:\\Web\\Node\\market-backend\\src\\app.ts",
+                            "fileName": "app.ts",
+                            "lineNumber": 54,
+                            "columnNumber": 20,
+                            "isConstructor": false,
+                            "functionName": "configuration",
+                            "typeName": "App",
+                            "methodName": "configuration"
+                        },
+                        {
+                            "filePath": "src\\app.ts",
+                            "fullFilePath": "E:\\Web\\Node\\market-backend\\src\\app.ts",
+                            "fileName": "app.ts",
+                            "lineNumber": 19,
+                            "columnNumber": 14,
+                            "isConstructor": true,
+                            "functionName": "App",
+                            "typeName": "App"
+                        },
+                        {
+                            "filePath": "src\\app.ts",
+                            "fullFilePath": "E:\\Web\\Node\\market-backend\\src\\app.ts",
+                            "fileName": "app.ts",
+                            "lineNumber": 68,
+                            "columnNumber": 16,
+                            "isConstructor": false,
+                            "typeName": "Object"
+                        }
+                    ],
+                    "codeFrame": {
+                        "firstLineNumber": 49,
+                        "lineNumber": 54,
+                        "columnNumber": 20,
+                        "linesBefore": [
+                            "            const router: Router = require(\"./app.routes\").default; // eslint-disable-line @typescript-eslint/no-var-requires\r",
+                            "            this.app.use(router);\r",
+                            "            this.app.use(errorHandler);\r",
+                            "        })();\r",
+                            "\r"
+                        ],
+                        "relevantLine": "        Logger.log(new Error(\"I am a pretty Error with a stacktrace.\"));\r",
+                        "linesAfter": [
+                            "\r",
+                            "    }\r",
+                            "\r",
+                            "    /**\r",
+                            "     * Used to start the server\r"
+                        ]
+                    },
+                    "errorString": "Error: I am a pretty Error with a stacktrace.\n    at App.configuration (E:\\Web\\Node\\market-backend\\dist\\app.js:49:29)\n    at new App (E:\\Web\\Node\\market-backend\\dist\\app.js:19:14)\n    at Object.<anonymous> (E:\\Web\\Node\\market-backend\\dist\\app.js:60:16)\n    at Module._compile (internal/modules/cjs/loader.js:1072:14)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1101:10)\n    at Module.load (internal/modules/cjs/loader.js:937:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:778:12)\n    at Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:76:12)\n    at internal/main/run_main_module.js:17:47"
+                }
+            ]
+        }
+    },
+    {
+        "time": "8/26/2021, 11:06:01 AM",
+        "logObject": {
+            "instanceName": "DESKTOP-224S48K",
+            "hostname": "DESKTOP-224S48K",
+            "date": "2021-08-26T05:36:01.058Z",
+            "logLevel": "error",
+            "logLevelId": 5,
+            "filePath": "src\\util\\logger.ts",
+            "fullFilePath": "E:\\Web\\Node\\market-backend\\src\\util\\logger.ts",
+            "fileName": "logger.ts",
+            "lineNumber": 55,
+            "columnNumber": 21,
+            "isConstructor": false,
+            "functionName": "log",
+            "typeName": "Function",
+            "methodName": "log",
+            "argumentsArray": [
+                {
+                    "details": {},
+                    "name": "Error",
+                    "isError": true,
+                    "message": "I am a pretty Error with a stacktrace.",
+                    "stack": [
+                        {
+                            "filePath": "src\\app.ts",
+                            "fullFilePath": "E:\\Web\\Node\\market-backend\\src\\app.ts",
+                            "fileName": "app.ts",
+                            "lineNumber": 98,
+                            "columnNumber": 20,
+                            "isConstructor": false,
+                            "functionName": "configuration",
+                            "typeName": "App",
+                            "methodName": "configuration"
+                        },
+                        {
+                            "filePath": "src\\app.ts",
+                            "fullFilePath": "E:\\Web\\Node\\market-backend\\src\\app.ts",
+                            "fileName": "app.ts",
+                            "lineNumber": 19,
+                            "columnNumber": 14,
+                            "isConstructor": true,
+                            "functionName": "App",
+                            "typeName": "App"
+                        },
+                        {
+                            "filePath": "src\\app.ts",
+                            "fullFilePath": "E:\\Web\\Node\\market-backend\\src\\app.ts",
+                            "fileName": "app.ts",
+                            "lineNumber": 112,
+                            "columnNumber": 16,
+                            "isConstructor": false,
+                            "typeName": "Object"
+                        }
+                    ],
+                    "codeFrame": {
+                        "firstLineNumber": 93,
+                        "lineNumber": 98,
+                        "columnNumber": 20,
+                        "linesBefore": [
+                            "            const router: Router = require(\"./app.routes\").default; // eslint-disable-line @typescript-eslint/no-var-requires\r",
+                            "            this.app.use(router);\r",
+                            "            this.app.use(errorHandler);\r",
+                            "        })();\r",
+                            "\r"
+                        ],
+                        "relevantLine": "        Logger.log(new Error(\"I am a pretty Error with a stacktrace.\"));\r",
+                        "linesAfter": [
+                            "\r",
+                            "    }\r",
+                            "\r",
+                            "    /**\r",
+                            "     * Used to start the server\r"
+                        ]
+                    },
+                    "errorString": "Error: I am a pretty Error with a stacktrace.\n    at App.configuration (E:\\Web\\Node\\market-backend\\dist\\app.js:93:29)\n    at new App (E:\\Web\\Node\\market-backend\\dist\\app.js:19:14)\n    at Object.<anonymous> (E:\\Web\\Node\\market-backend\\dist\\app.js:104:16)\n    at Module._compile (internal/modules/cjs/loader.js:1072:14)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1101:10)\n    at Module.load (internal/modules/cjs/loader.js:937:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:778:12)\n    at Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:76:12)\n    at internal/main/run_main_module.js:17:47"
+                }
+            ]
+        }
+    },
+    {
+        "time": "8/25/2021, 11:13:50 PM",
+        "logObject": {
+            "instanceName": "DESKTOP-224S48K",
+            "hostname": "DESKTOP-224S48K",
+            "date": "2021-08-25T17:43:50.159Z",
+            "logLevel": "error",
+            "logLevelId": 5,
+            "filePath": "src\\util\\logger.ts",
+            "fullFilePath": "E:\\Web\\Node\\market-backend\\src\\util\\logger.ts",
+            "fileName": "logger.ts",
+            "lineNumber": 55,
+            "columnNumber": 21,
+            "isConstructor": false,
+            "functionName": "log",
+            "typeName": "Function",
+            "methodName": "log",
+            "argumentsArray": [
+                {
+                    "details": {},
+                    "name": "Error",
+                    "isError": true,
+                    "message": "I am a pretty Error with a stacktrace.",
+                    "stack": [
+                        {
+                            "filePath": "src\\app.ts",
+                            "fullFilePath": "E:\\Web\\Node\\market-backend\\src\\app.ts",
+                            "fileName": "app.ts",
+                            "lineNumber": 54,
+                            "columnNumber": 20,
+                            "isConstructor": false,
+                            "functionName": "configuration",
+                            "typeName": "App",
+                            "methodName": "configuration"
+                        },
+                        {
+                            "filePath": "src\\app.ts",
+                            "fullFilePath": "E:\\Web\\Node\\market-backend\\src\\app.ts",
+                            "fileName": "app.ts",
+                            "lineNumber": 19,
+                            "columnNumber": 14,
+                            "isConstructor": true,
+                            "functionName": "App",
+                            "typeName": "App"
+                        },
+                        {
+                            "filePath": "src\\app.ts",
+                            "fullFilePath": "E:\\Web\\Node\\market-backend\\src\\app.ts",
+                            "fileName": "app.ts",
+                            "lineNumber": 68,
+                            "columnNumber": 16,
+                            "isConstructor": false,
+                            "typeName": "Object"
+                        }
+                    ],
+                    "codeFrame": {
+                        "firstLineNumber": 49,
+                        "lineNumber": 54,
+                        "columnNumber": 20,
+                        "linesBefore": [
+                            "            const router: Router = require(\"./app.routes\").default; // eslint-disable-line @typescript-eslint/no-var-requires\r",
+                            "            this.app.use(router);\r",
+                            "            this.app.use(errorHandler);\r",
+                            "        })();\r",
+                            "\r"
+                        ],
+                        "relevantLine": "        Logger.log(new Error(\"I am a pretty Error with a stacktrace.\"));\r",
+                        "linesAfter": [
+                            "\r",
+                            "    }\r",
+                            "\r",
+                            "    /**\r",
+                            "     * Used to start the server\r"
+                        ]
+                    },
+                    "errorString": "Error: I am a pretty Error with a stacktrace.\n    at App.configuration (E:\\Web\\Node\\market-backend\\dist\\app.js:49:29)\n    at new App (E:\\Web\\Node\\market-backend\\dist\\app.js:19:14)\n    at Object.<anonymous> (E:\\Web\\Node\\market-backend\\dist\\app.js:60:16)\n    at Module._compile (internal/modules/cjs/loader.js:1072:14)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1101:10)\n    at Module.load (internal/modules/cjs/loader.js:937:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:778:12)\n    at Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:76:12)\n    at internal/main/run_main_module.js:17:47"
+                }
+            ]
+        }
+    },
+    {
+        "time": "8/25/2021, 11:14:30 PM",
+        "logObject": {
+            "instanceName": "DESKTOP-224S48K",
+            "hostname": "DESKTOP-224S48K",
+            "date": "2021-08-25T17:44:30.953Z",
+            "logLevel": "error",
+            "logLevelId": 5,
+            "filePath": "src\\util\\logger.ts",
+            "fullFilePath": "E:\\Web\\Node\\market-backend\\src\\util\\logger.ts",
+            "fileName": "logger.ts",
+            "lineNumber": 55,
+            "columnNumber": 21,
+            "isConstructor": false,
+            "functionName": "log",
+            "typeName": "Function",
+            "methodName": "log",
+            "argumentsArray": [
+                {
+                    "details": {},
+                    "name": "Error",
+                    "isError": true,
+                    "message": "I am a pretty Error with a stacktrace.",
+                    "stack": [
+                        {
+                            "filePath": "src\\app.ts",
+                            "fullFilePath": "E:\\Web\\Node\\market-backend\\src\\app.ts",
+                            "fileName": "app.ts",
+                            "lineNumber": 54,
+                            "columnNumber": 20,
+                            "isConstructor": false,
+                            "functionName": "configuration",
+                            "typeName": "App",
+                            "methodName": "configuration"
+                        },
+                        {
+                            "filePath": "src\\app.ts",
+                            "fullFilePath": "E:\\Web\\Node\\market-backend\\src\\app.ts",
+                            "fileName": "app.ts",
+                            "lineNumber": 19,
+                            "columnNumber": 14,
+                            "isConstructor": true,
+                            "functionName": "App",
+                            "typeName": "App"
+                        },
+                        {
+                            "filePath": "src\\app.ts",
+                            "fullFilePath": "E:\\Web\\Node\\market-backend\\src\\app.ts",
+                            "fileName": "app.ts",
+                            "lineNumber": 68,
+                            "columnNumber": 16,
+                            "isConstructor": false,
+                            "typeName": "Object"
+                        }
+                    ],
+                    "codeFrame": {
+                        "firstLineNumber": 49,
+                        "lineNumber": 54,
+                        "columnNumber": 20,
+                        "linesBefore": [
+                            "            const router: Router = require(\"./app.routes\").default; // eslint-disable-line @typescript-eslint/no-var-requires\r",
+                            "            this.app.use(router);\r",
+                            "            this.app.use(errorHandler);\r",
+                            "        })();\r",
+                            "\r"
+                        ],
+                        "relevantLine": "        Logger.log(new Error(\"I am a pretty Error with a stacktrace.\"));\r",
+                        "linesAfter": [
+                            "\r",
+                            "    }\r",
+                            "\r",
+                            "    /**\r",
+                            "     * Used to start the server\r"
+                        ]
+                    },
+                    "errorString": "Error: I am a pretty Error with a stacktrace.\n    at App.configuration (E:\\Web\\Node\\market-backend\\dist\\app.js:49:29)\n    at new App (E:\\Web\\Node\\market-backend\\dist\\app.js:19:14)\n    at Object.<anonymous> (E:\\Web\\Node\\market-backend\\dist\\app.js:60:16)\n    at Module._compile (internal/modules/cjs/loader.js:1072:14)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1101:10)\n    at Module.load (internal/modules/cjs/loader.js:937:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:778:12)\n    at Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:76:12)\n    at internal/main/run_main_module.js:17:47"
+                }
+            ]
+        }
+    },
+    {
+        "time": "8/25/2021, 11:56:14 PM",
+        "logObject": {
+            "instanceName": "DESKTOP-224S48K",
+            "hostname": "DESKTOP-224S48K",
+            "date": "2021-08-25T18:26:14.646Z",
+            "logLevel": "error",
+            "logLevelId": 5,
+            "filePath": "src\\util\\logger.ts",
+            "fullFilePath": "E:\\Web\\Node\\market-backend\\src\\util\\logger.ts",
+            "fileName": "logger.ts",
+            "lineNumber": 55,
+            "columnNumber": 21,
+            "isConstructor": false,
+            "functionName": "log",
+            "typeName": "Function",
+            "methodName": "log",
+            "argumentsArray": [
+                {
+                    "details": {},
+                    "name": "Error",
+                    "isError": true,
+                    "message": "I am a pretty Error with a stacktrace.",
+                    "stack": [
+                        {
+                            "filePath": "src\\app.ts",
+                            "fullFilePath": "E:\\Web\\Node\\market-backend\\src\\app.ts",
+                            "fileName": "app.ts",
+                            "lineNumber": 54,
+                            "columnNumber": 20,
+                            "isConstructor": false,
+                            "functionName": "configuration",
+                            "typeName": "App",
+                            "methodName": "configuration"
+                        },
+                        {
+                            "filePath": "src\\app.ts",
+                            "fullFilePath": "E:\\Web\\Node\\market-backend\\src\\app.ts",
+                            "fileName": "app.ts",
+                            "lineNumber": 19,
+                            "columnNumber": 14,
+                            "isConstructor": true,
+                            "functionName": "App",
+                            "typeName": "App"
+                        },
+                        {
+                            "filePath": "src\\app.ts",
+                            "fullFilePath": "E:\\Web\\Node\\market-backend\\src\\app.ts",
+                            "fileName": "app.ts",
+                            "lineNumber": 68,
+                            "columnNumber": 16,
+                            "isConstructor": false,
+                            "typeName": "Object"
+                        }
+                    ],
+                    "codeFrame": {
+                        "firstLineNumber": 49,
+                        "lineNumber": 54,
+                        "columnNumber": 20,
+                        "linesBefore": [
+                            "            const router: Router = require(\"./app.routes\").default; // eslint-disable-line @typescript-eslint/no-var-requires\r",
+                            "            this.app.use(router);\r",
+                            "            this.app.use(errorHandler);\r",
+                            "        })();\r",
+                            "\r"
+                        ],
+                        "relevantLine": "        Logger.log(new Error(\"I am a pretty Error with a stacktrace.\"));\r",
+                        "linesAfter": [
+                            "\r",
+                            "    }\r",
+                            "\r",
+                            "    /**\r",
+                            "     * Used to start the server\r"
+                        ]
+                    },
+                    "errorString": "Error: I am a pretty Error with a stacktrace.\n    at App.configuration (E:\\Web\\Node\\market-backend\\dist\\app.js:49:29)\n    at new App (E:\\Web\\Node\\market-backend\\dist\\app.js:19:14)\n    at Object.<anonymous> (E:\\Web\\Node\\market-backend\\dist\\app.js:60:16)\n    at Module._compile (internal/modules/cjs/loader.js:1072:14)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1101:10)\n    at Module.load (internal/modules/cjs/loader.js:937:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:778:12)\n    at Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:76:12)\n    at internal/main/run_main_module.js:17:47"
+                }
+            ]
+        }
+    }
+]

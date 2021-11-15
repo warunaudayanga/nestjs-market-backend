@@ -1,0 +1,37 @@
+<div class="alert-dialog">
+    <form (ngSubmit)="submit()" [formGroup]="formGroup">
+    <div mat-dialog-title class="">
+        <i class="alert-icon {{icon}} text-{{colorClass}}"></i>
+        <span class="alert-title">{{title}}</span>
+    </div>
+    <mat-dialog-content>
+        <span *ngIf="message">{{message}}</span>
+        <ng-container class="input-group" *ngFor="let formControl of formData">
+            <div class="row g-3 align-items-center mb-3">
+                <div class="col-4">
+                    <label [for]="formControl.name" class="col-form-label">{{formControl.label}}</label>
+                </div>
+                <div class="col-8">
+                    <ng-container *ngIf="normalTypes.includes(formControl.type)">
+                        <input [name]="formControl.name" [type]="formControl.type" [id]="formControl.name" formControlName="{{formControl.name}}" class="form-control form-control-sm" required>
+                    </ng-container>
+                    <ng-container *ngIf="formControl.type === 'select' && formControl.options">
+                        <ng-select
+                            formControlName="{{formControl.name}}"
+                            [id]="formControl.name"
+                            [clearable]="!formControl.required"
+                            [searchable]="false" appendTo="body">
+                            <ng-option *ngFor="let value of formControl.options.values, let i = index" [value]="value">{{getOptionValue(formControl.options, i)}}</ng-option>
+                        </ng-select>
+                    </ng-container>
+                </div>
+            </div>
+        </ng-container>
+    </mat-dialog-content>
+    <mat-divider></mat-divider>
+    <mat-dialog-actions>
+        <button type="button" class="btn btn-{{isConfirm || isPrompt ? 'secondary' : colorClass}} text-light d-block ms-auto" (click)="close()">{{(!isAlert ? (buttons?.cancel ? buttons?.cancel : isConfirm ? "NO" : "CANCEL") : buttons?.ok ? buttons?.ok : "OK")?.toUpperCase()}}</button>
+        <button *ngIf="isConfirm || isPrompt" [type]="isPrompt ? 'submit' : 'button'" class="btn btn-{{colorClass}} text-light d-block ms-3" (click)="confirm()">{{(buttons?.yes ? buttons?.yes : isConfirm ? "YES" : "OK")?.toUpperCase()}}</button>
+    </mat-dialog-actions>
+    </form>
+</div>

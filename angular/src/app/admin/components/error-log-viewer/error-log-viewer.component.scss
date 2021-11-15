@@ -1,0 +1,137 @@
+@import "src/global-vars";
+
+.errors {
+    background-color: black;
+    color: white;
+    font-family: Consolas, serif;
+    padding: 0 20px;
+    .error {
+        .error-content {
+            width: 100%;
+            overflow-x: auto;
+            padding: 20px 0;
+            margin-bottom: 20px;
+
+            .error-heading {
+                .error-level {
+                    //background-color: #a10000;
+                    //padding: 0 2px;
+                    //margin-right: 5px;
+                }
+                .error-date {
+                    &.error {
+                        color: #dd0000;
+                    }
+                    &.warning {
+                        background-color: yellow;
+                    }
+                }
+                .error-path {
+                    .path-line {
+                        color: #9a9a9a;
+                    }
+                    .path-block {
+                        .block-type {
+                            color: #9a9a9a;
+                        }
+                        .block-name {
+                            color: #9a9a9a;
+                            margin-left: 5px;
+                        }
+                    }
+                }
+            }
+            .error-arguments {
+                .error-argument{
+                    &> * {
+                        margin-top: 20px;
+                    }
+                    .argument-title {
+                        .title-name {
+                            margin-right: 10px;
+                            padding: 3px 0 3px 10px;
+                            &.error {
+                                background-color: #a10000;
+                            }
+                            &.warning {
+                                background-color: #9b9b01;
+                            }
+                        }
+                        .title-message {
+
+                        }
+                    }
+                    .argument-stacks {
+                        .stacks-title {
+
+                        }
+                        .argument-stack {
+                            margin-top: 20px;
+                            padding-left: 40px;
+                            .stack-title {
+                                .title-file {
+                                    color: yellow;
+                                }
+                                .title-block {
+
+                                }
+                            }
+                            .stack-path {
+                                padding-left: 40px;
+                                color: #9a9a9a;
+                            }
+                        }
+                    }
+
+                    .argument-frame {
+                        white-space: nowrap;
+                        .frame-title {
+                            margin-bottom: 20px;
+                        }
+                        .frame-lines {
+                            padding-left: 40px;
+                            .frame-line {
+                                .line-start {
+
+                                }
+                                .line-no {
+
+                                }
+                                .line-content {
+
+                                }
+                                &.caret-line {
+                                    height: 0;
+                                }
+                                &.caret-line .line-content,
+                                &.relevant-line .line-start {
+                                    color: red;
+                                }
+                                &.relevant-line {
+                                    color: #dd0000;
+                                }
+                            }
+                        }
+                    }
+                    .argument-string {
+                        .string-title {
+                            margin-bottom: 20px;
+                        }
+                        .string-content {
+                            padding-left: 40px;
+                            .code-path-gray {
+                                color: #9a9a9a;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        .error-separator {
+            width: calc(100vw - 50px) !important;
+            overflow: hidden;
+            height: 15px;
+        }
+    }
+
+}

@@ -1,0 +1,10 @@
+<app-navbar *ngIf="logged" class="app-navbar {{logged? 'logged': ''}}"></app-navbar>
+<mat-drawer-container class="app-content {{logged? 'logged': ''}}" autosize>
+    <mat-drawer #sidenav [mode]="sidenavMode" [opened]="wide">
+        <app-sidenav class="app-sidenav"></app-sidenav>
+    </mat-drawer>
+    <mat-drawer-content>
+            <router-outlet></router-outlet>
+    </mat-drawer-content>
+</mat-drawer-container>
+<app-loader></app-loader>

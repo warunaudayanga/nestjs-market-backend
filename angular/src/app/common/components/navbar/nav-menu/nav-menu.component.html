@@ -1,0 +1,7 @@
+<div *ngIf="logged" class="avatar-container" [matMenuTriggerFor]="menu">
+    <img class="avatar" src="{{app.user?.profile?.image? app.user?.profile?.image: './assets/images/avatar.png'}}" alt="user.png">
+</div>
+<mat-menu #menu="matMenu" class="profile-menu">
+    <button mat-menu-item><i class="icofont icofont-user-alt-4"></i> Profile</button>
+    <button mat-menu-item (click)="logout()"><i class="icofont icofont-power"></i> Logout</button>
+</mat-menu>

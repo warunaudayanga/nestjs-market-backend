@@ -1,0 +1,21 @@
+@import "src/global-vars";
+
+:host {
+    margin-right: 20px;
+}
+.btn-noty {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    margin-left: 15px;
+    background-color: $app-text-select-color;
+    * {
+        padding: 0;
+        color: $app-primary-color;;
+    }
+    i {
+        font-size: 25px;
+    }
+}

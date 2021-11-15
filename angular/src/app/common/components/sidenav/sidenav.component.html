@@ -1,0 +1,18 @@
+<div *ngIf="logged" class="sidenav">
+    <div class="menu">
+        <div class="menu-item" *ngFor="let item of menu" [routerLink]="item.path">
+            <div class="menu-item-text" [class]="!item.children && item.active? 'active': ''" (click)="select(item)">
+                <i class="icon {{item.icon}}"></i>
+                <span class="title">{{item.name}}</span>
+            </div>
+            <div class="sub-menu" *ngIf="item.children && item.opened">
+                <div class="menu-item" *ngFor="let child of item.children" [routerLink]="child.path">
+                    <div class="menu-item-text" [class]="child.active? 'active': ''" (click)="select(child)">
+                        <i class="icon {{child.icon}}"></i>
+                        <span class="title">{{child.name}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

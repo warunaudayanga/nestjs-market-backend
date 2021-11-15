@@ -1,0 +1,45 @@
+@import "src/global-vars";
+
+.pagination-container {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: $app-pagination-padding;
+}
+.pagination {
+    width: fit-content;
+    margin: auto;
+
+    .disabled {
+        opacity: 0.7;
+    }
+    .pagination-item {
+        display: inline-block;
+        width: $app-pagination-item;
+        height: $app-pagination-item;
+        background-color: $app-primary-color;
+        color: $app-text-invert-color;
+        text-align: center;
+        line-height: $app-pagination-item;
+        font-size: 15px;
+        font-weight: bold;
+
+        .icofont {
+            font-size: 30px;
+        }
+        &.pagination-current {
+            background-color: $app-secondary-color;
+            color: $app-text-invert-color;
+        }
+        &:not(.pagination-current) {
+            cursor: pointer;
+            border: 1px solid $app-secondary-color;
+            border-right: none;
+            text-decoration: none;
+        }
+    }
+    > :last-child {
+        border-right: 1px solid $app-secondary-color;
+    }
+}

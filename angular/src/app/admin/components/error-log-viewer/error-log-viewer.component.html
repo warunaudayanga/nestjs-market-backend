@@ -1,0 +1,82 @@
+<!--suppress TypeScriptUnresolvedVariable, JSUnusedGlobalSymbols -->
+<div class="errors">
+
+    <div class="error" *ngFor="let error of errArray">
+        <div class="error-separator">
+            ================================================================================================================================================================================================
+        </div>
+        <div class="error-content">
+            <div class="error-heading">
+                <!--                <span class="error-level">{{error.logObject.logLevel.toUpperCase()}}</span>-->
+                <span class="error-date {{error.logObject.logLevel}}">{{error.logObject.date | amDateFormat: 'MMMM Do YYYY, h:mm:ss a'}} </span>
+                <span class="error-path">
+                <ng-container>[</ng-container>
+                <span class="path-line">{{error.logObject.filePath}}:{{error.logObject.lineNumber}} - </span>
+                <span class="path-block">
+                    <span class="block-type">{{error.logObject.typeName}}</span>
+                    <span class="block-name">{{error.logObject.functionName
+                        ? error.logObject.functionName
+                        : error.logObject.methodName
+                            ? error.logObject.methodName
+                            :""
+                        }}</span>
+                </span>
+                <ng-container>]</ng-container>
+            </span>
+            </div>
+            <div class="error-arguments">
+                <div class="error-argument" *ngFor="let argument of error.logObject.argumentsArray">
+                    <div class="argument-title">
+                        <span class="title-name {{error.logObject.logLevel}}">{{argument.name}}: </span>
+                        <span class="title-message">{{argument.message}}</span>
+                    </div>
+                    <div class="argument-stacks">
+                        <div class="stacks-title">Stack:</div>
+                        <div class="argument-stack" *ngFor="let stack of argument.stack">
+                            <div class="stack-title">
+                                <span class="title-file">{{stack.fileName}}:{{stack.lineNumber}}</span>
+                                <span class="title-block"> - {{stack.functionName? stack.functionName: '&lt;anonymous&gt;'}}</span>
+                            </div>
+                            <div class="stack-path">{{stack.fullFilePath}}:{{stack.lineNumber}}:{{stack.columnNumber}}</div>
+                        </div>
+                    </div>
+                    <div class="argument-frame">
+                        <div class="frame-title">Frame:</div>
+                        <div class="frame-lines">
+                            <div class="frame-line" *ngFor="let line of argument.codeFrame.linesBefore, let i = index">
+                                <span class="line-start">&nbsp;&nbsp;{{(argument.codeFrame.lineNumber + 5).toString().length !== (argument.codeFrame.firstLineNumber + i).toString().length? '&nbsp;': ''}}</span>
+                                <span class="line-no">{{argument.codeFrame.firstLineNumber + i}} | </span>
+                                <span class="line-content">{{line.toString().replace(reSpace, '&nbsp;')}}</span>
+                            </div>
+                            <div class="frame-line relevant-line">
+                                <span class="line-start">&gt;&nbsp;{{(argument.codeFrame.lineNumber + 5).toString().length !== argument.codeFrame.lineNumber.toString().length? '&nbsp;': ''}}</span>
+                                <span class="line-no">{{argument.codeFrame.lineNumber}} | </span>
+                                <span class="line-content">{{argument.codeFrame.relevantLine.toString().replace(reSpace, '&nbsp;')}}</span>
+                            </div>
+                            <div class="frame-line caret-line">
+                                <span class="line-start">&nbsp;&nbsp;{{(argument.codeFrame.lineNumber + 5).toString().length !== argument.codeFrame.lineNumber.toString().length? '&nbsp;': ''}}</span>
+                                <span class="line-no"><ng-container *ngFor="let e of [].constructor(argument.codeFrame.lineNumber.toString().length), let i = index">{{'&nbsp;'}}</ng-container>&nbsp;&nbsp;&nbsp;</span>
+                                <span class="line-content">
+                                    <ng-container *ngFor="let e of [].constructor(argument.codeFrame.columnNumber), let i = index">{{i + 1 === argument.codeFrame.columnNumber? '&#8673;': '&nbsp;'}}</ng-container>
+                                </span>
+                            </div>
+                            <div class="frame-line" *ngFor="let line of argument.codeFrame.linesAfter, let i = index">
+                                <span class="line-start">&nbsp;&nbsp;{{(argument.codeFrame.lineNumber + 5).toString().length !== (argument.codeFrame.firstLineNumber + 6 + i).toString().length? '&nbsp;': ''}}</span>
+                                <span class="line-no">{{argument.codeFrame.firstLineNumber + 6 + i}} | </span>
+                                <span class="line-content">{{line.toString().replace(reSpace, '&nbsp;')}}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div  class="argument-string">
+                        <div class="string-title">JS Stack:</div>
+                        <div class="string-content" [innerHTML]="argument.errorString.toString()
+                        .replace(reLineBreak, '<br>&nbsp;&nbsp;&nbsp;&nbsp;')
+                        .replace(reOpenBracket, '(<span class=\'code-path\'>')
+                        .replace(reCloseBracket, '</span>)')"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
