@@ -272,8 +272,8 @@ export class Service<Entity extends CommonEntity> {
                         lastName: updater.profile.lastName
                     };
                 }
-                await queryRunner.release();
             }
+            await queryRunner.release();
             const total = await this.repository.count();
             return { entities, total, page: toNumber(getAllDto?.page), limit: toNumber(getAllDto?.limit) };
         } catch (err: any) {
