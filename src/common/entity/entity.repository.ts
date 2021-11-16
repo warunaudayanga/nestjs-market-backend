@@ -17,7 +17,7 @@ export class CommonRepository<Entity> extends Repository<Entity> {
     }
 
     isTransactional(): boolean {
-        return this.queryRunner.isTransactionActive;
+        return this.queryRunner?.isTransactionActive;
     }
 
     saveAuth<T extends DeepPartial<Entity> & DeepPartial<CommonEntity>>(entity: T, req: ReqAuth, options?: SaveOptions): Promise<Entity> {
