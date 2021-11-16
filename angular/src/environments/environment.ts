@@ -4,8 +4,8 @@
 
 export const environment = {
     production: false,
-    // apiUrl: "http://localhost:8080/api",
-    apiUrl: "https://app-market-backend.herokuapp.com/api",
+    apiUrl: "http://localhost:8080/api",
+    // apiUrl: "https://app-market-backend.herokuapp.com/api",
     inputs: {
         max: 50,
         min: 3

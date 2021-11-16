@@ -228,7 +228,7 @@ export class PositionComponent implements AfterViewInit {
         // ];
         // this.tableData.pagination.totalItems = 100;
 
-        this.loading = true;
+        // this.loading = true;
         this.positionService.getAll(this.tableData.pagination.currentPage, this.tableData.pagination.itemsPerPage, "name", false)
             .subscribe(response => {
                 console.log(response);

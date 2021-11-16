@@ -52,8 +52,9 @@ export interface GetAllResponse<T> {
     limit: number;
 }
 
+// noinspection JSUnusedGlobalSymbols
 export interface IObject {
-    [ke: string]: IObject | any
+    [ke: string]: IObject | any;
 }
 
 export type CSSLength =`${number}${"px"|"rem"|"em"|"%"}` | "auto";

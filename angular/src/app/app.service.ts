@@ -1,4 +1,4 @@
-import { EventEmitter, Injectable, Type } from "@angular/core";
+import { EventEmitter, Inject, Injectable, Type } from "@angular/core";
 import { Router } from "@angular/router";
 import { Observable } from "rxjs";
 import { UserEntity } from "./auth/auth.interfaces";
@@ -8,6 +8,7 @@ import { DialogButtons, FormControlData, PromptResponse } from "./modules/dialog
 import { AbstractControl } from "@angular/forms";
 import { LoaderService } from "./modules/loader/loader.service";
 import { CSSMeasurement } from "./common/interfaces/common.interfaces";
+import { DOCUMENT } from "@angular/common";
 
 @Injectable({
     providedIn: "root"
@@ -20,9 +21,26 @@ export class AppService {
 
     private _user: UserEntity | null = null;
 
-    constructor(private router: Router, private dialog: DialogService, public toast: ToastrService, private loader: LoaderService) {
+    constructor(
+        @Inject(DOCUMENT) private document: Document,
+        private router: Router,
+        private dialog: DialogService,
+        public toast: ToastrService,
+        private loader: LoaderService
+    ) {
         this._width = window.innerWidth;
         this._height = window.innerHeight;
+    }
+
+    handleShortcut(e: KeyboardEvent): void {
+        const controlElementTagNames = ["INPUT", "SELECT", "TEXTAREA", "BUTTON"];
+        const element = e.target as HTMLElement;
+        const targetElement = this.document.querySelector(`[data-key='${e.key}']`) as HTMLElement;
+        if (!controlElementTagNames.includes(element.tagName) && targetElement) {
+            targetElement.click();
+            e.preventDefault();
+        }
+        console.log(element?.parentElement?.getAttribute("role"));
     }
 
     get width(): number {

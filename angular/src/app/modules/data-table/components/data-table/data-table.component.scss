@@ -8,6 +8,9 @@ $header-text-color: $app-text-invert-color;
         background-color: $header-color;
         color: $header-text-color;
     }
+    tbody {
+        border-top-color: $header-color;
+    }
     td, th {
         vertical-align: middle;
         padding: 0 15px;

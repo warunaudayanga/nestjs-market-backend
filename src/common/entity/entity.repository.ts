@@ -10,7 +10,9 @@ export type ReqAuth = Request & { user: { auth: Auth } }
 
 export class CommonRepository<Entity> extends Repository<Entity> {
 
-    constructor(private EntityTarget, public queryRunner: QueryRunner) {
+    public queryRunner: QueryRunner;
+
+    constructor(private EntityTarget) {
         super();
     }
 

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ViewChild } from "@angular/core";
+import { AfterViewInit, Component, HostListener, ViewChild } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { AuthService } from "./auth/services/auth.service";
 import { MatDrawerMode, MatSidenav } from "@angular/material/sidenav";
@@ -51,4 +51,8 @@ export class AppComponent implements AfterViewInit {
         this.sidenavService.sidenav = this.sidenav;
     }
 
+    @HostListener("document:keydown", ["$event"])
+    handleKeyboardEvent(event: KeyboardEvent) {
+        this.app.handleShortcut(event);
+    }
 }

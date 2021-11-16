@@ -37,6 +37,7 @@ export class Service<Entity extends CommonEntity> {
     // noinspection JSUnusedGlobalSymbols
     async startTransaction(): Promise<boolean> {
         try {
+            this.repository.queryRunner = await getConnection().createQueryRunner();
             await this.repository.queryRunner.connect();
             await this.repository.queryRunner.startTransaction();
             return true;
@@ -48,7 +49,10 @@ export class Service<Entity extends CommonEntity> {
     // noinspection JSUnusedGlobalSymbols
     async commitTransaction(): Promise<boolean> {
         try {
-            await this.repository.queryRunner.commitTransaction();
+            await this.repository.queryRunner.commitTransaction()
+                .finally(() => {
+                    this.repository.queryRunner.release();
+                });
             return true;
         } catch (err: any) {
             return false;
@@ -58,7 +62,10 @@ export class Service<Entity extends CommonEntity> {
     // noinspection JSUnusedGlobalSymbols
     async rollbackTransaction(): Promise<boolean> {
         try {
-            await this.repository.queryRunner.rollbackTransaction();
+            await this.repository.queryRunner.rollbackTransaction()
+                .finally(() => {
+                    this.repository.queryRunner.release();
+                });
             return true;
         } catch (err: any) {
             return false;
@@ -221,9 +228,9 @@ export class Service<Entity extends CommonEntity> {
             return Promise.reject(this.gerError(Err.E_400_EMPTY_ID));
         }
         const entity = await this.getOne(id, options, eh);
-        const manager = getConnection().createQueryRunner().manager;
+        const queryRunner = await getConnection().createQueryRunner();
         if (entity.createdBy) {
-            const creator = await manager.findOne(Auth, { where: { id: entity.createdBy } } );
+            const creator = await queryRunner.manager.findOne(Auth, { where: { id: entity.createdBy } } );
             entity.createdBy = {
                 id: creator.id,
                 firstName: creator.profile.firstName,
@@ -231,13 +238,14 @@ export class Service<Entity extends CommonEntity> {
             };
         }
         if (entity.updatedBy) {
-            const updater = await manager.findOne(Auth, { where: { id: entity.updatedBy } } );
+            const updater = await queryRunner.manager.findOne(Auth, { where: { id: entity.updatedBy } } );
             entity.updatedBy = {
                 id: updater.id,
                 firstName: updater.profile.firstName,
                 lastName: updater.profile.lastName
             };
         }
+        queryRunner.release();
         return entity;
     }
 
@@ -246,10 +254,10 @@ export class Service<Entity extends CommonEntity> {
         const opt = options ? { ...options, ...getAllOpts } : { ...getAllOpts };
         try {
             const entities = await this.repository.find(opt);
-            const manager = getConnection().createQueryRunner().manager;
+            const queryRunner = await getConnection().createQueryRunner();
             for await (const entity of entities) {
                 if (entity.createdBy) {
-                    const creator = await manager.findOne(Auth, { where: { id: entity.createdBy } } );
+                    const creator = await queryRunner.manager.findOne(Auth, { where: { id: entity.createdBy } } );
                     entity.createdBy = {
                         id: creator.id,
                         firstName: creator.profile.firstName,
@@ -257,13 +265,14 @@ export class Service<Entity extends CommonEntity> {
                     };
                 }
                 if (entity.updatedBy) {
-                    const updater = await manager.findOne(Auth, { where: { id: entity.updatedBy } } );
+                    const updater = await queryRunner.manager.findOne(Auth, { where: { id: entity.updatedBy } } );
                     entity.updatedBy = {
                         id: updater.id,
                         firstName: updater.profile.firstName,
                         lastName: updater.profile.lastName
                     };
                 }
+                await queryRunner.release();
             }
             const total = await this.repository.count();
             return { entities, total, page: toNumber(getAllDto?.page), limit: toNumber(getAllDto?.limit) };

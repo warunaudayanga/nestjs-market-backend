@@ -135,6 +135,11 @@ app-notification {
     .table-view {
         width: auto;
         margin: auto;
+        tr:last-child {
+            td, th {
+                border-bottom: none;
+            }
+        }
         td {
             padding-left: 20px;
         }
