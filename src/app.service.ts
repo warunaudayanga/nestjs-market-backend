@@ -6,6 +6,7 @@ import { StatusString } from "./common/entity/entity.enums";
 import { Gender } from "./market/user/enums/user.enums";
 import { EntityManager } from "typeorm";
 import { Position } from "./market/user/entities/position.entity";
+import { User } from "./market/user/entities/user.entity";
 
 @Injectable()
 export class AppService implements OnApplicationBootstrap {
@@ -17,20 +18,7 @@ export class AppService implements OnApplicationBootstrap {
 
         if (!await this.entityManager.findOne(Auth, { email: "admin@market.com", nic: "000000000V" })) {
             await this.entityManager.transaction(async transactionalEntityManager => {
-                let position = await this.entityManager.findOne(Position, { name: "Admin" });
-                if (!position) {
-                    const adminPosition: Position = {
-                        name: "Admin",
-                        status: false,
-                        statusString: StatusString.DEACTIVE,
-                        createdAt: undefined,
-                        createdBy: undefined,
-                        updatedAt: undefined,
-                        updatedBy: undefined
-                    };
-                    position = await transactionalEntityManager.save(Position, adminPosition);
-                }
-                const admin: Auth = {
+                const adminDto: Auth = {
                     id: undefined,
                     email: "admin@market.com",
                     nic: "000000000V",
@@ -51,7 +39,7 @@ export class AppService implements OnApplicationBootstrap {
                         address: {
                             line1: ""
                         },
-                        position: position.id,
+                        position: undefined,
                         status: false,
                         statusString: StatusString.DEACTIVE,
                         createdAt: undefined,
@@ -64,7 +52,23 @@ export class AppService implements OnApplicationBootstrap {
                     updatedAt: undefined,
                     updatedBy: undefined
                 };
-                await transactionalEntityManager.save(Auth, admin);
+                const admin = await transactionalEntityManager.save(Auth, adminDto);
+
+                let position = await this.entityManager.findOne(Position, { name: "Admin" });
+                if (!position) {
+                    const adminPosition: Position = {
+                        name: "Admin",
+                        status: false,
+                        statusString: StatusString.DEACTIVE,
+                        createdAt: new Date(),
+                        createdBy: admin.id,
+                        updatedAt: undefined,
+                        updatedBy: undefined
+                    };
+                    position = await transactionalEntityManager.save(Position, adminPosition);
+                }
+
+                await transactionalEntityManager.update(User, admin.profile.id, { position: position.id });
             });
         }
     }
