@@ -10,14 +10,14 @@ export type ReqAuth = Request & { user: { auth: Auth } }
 
 export class CommonRepository<Entity> extends Repository<Entity> {
 
-    public queryRunner: QueryRunner;
+    public transactionalQueryRunner: QueryRunner;
 
     constructor(private EntityTarget) {
         super();
     }
 
     isTransactional(): boolean {
-        return this.queryRunner?.isTransactionActive;
+        return this.transactionalQueryRunner?.isTransactionActive;
     }
 
     saveAuth<T extends DeepPartial<Entity> & DeepPartial<CommonEntity>>(entity: T, req: ReqAuth, options?: SaveOptions): Promise<Entity> {
@@ -25,8 +25,8 @@ export class CommonRepository<Entity> extends Repository<Entity> {
         entity.createdBy = req.user.auth.id;
         entity.updatedBy = null;
         if (this.isTransactional()) {
-            const entityInstance = this.queryRunner.manager.create(this.EntityTarget, entity) as Entity & CommonEntity;
-            return this.queryRunner.manager.save(entityInstance, options);
+            const entityInstance = this.transactionalQueryRunner.manager.create(this.EntityTarget, entity) as Entity & CommonEntity;
+            return this.transactionalQueryRunner.manager.save(entityInstance, options);
         }
         return super.save(entity, options);
     }
@@ -34,8 +34,8 @@ export class CommonRepository<Entity> extends Repository<Entity> {
     saveAlt<T extends DeepPartial<Entity>>(entity: T, options?: SaveOptions): Promise<Entity> {
         omit(entity);
         if (this.isTransactional()) {
-            const entityInstance = this.queryRunner.manager.create(this.EntityTarget, entity) as Entity & CommonEntity;
-            return this.queryRunner.manager.save(entityInstance, options);
+            const entityInstance = this.transactionalQueryRunner.manager.create(this.EntityTarget, entity) as Entity & CommonEntity;
+            return this.transactionalQueryRunner.manager.save(entityInstance, options);
         }
         return super.save(entity, options);
     }
@@ -47,8 +47,8 @@ export class CommonRepository<Entity> extends Repository<Entity> {
             entity.updatedBy = null;
         });
         if (this.isTransactional()) {
-            const entityInstance = this.queryRunner.manager.create(this.EntityTarget, entities) as (Entity & CommonEntity)[];
-            return await this.queryRunner.manager.save(entityInstance, options);
+            const entityInstance = this.transactionalQueryRunner.manager.create(this.EntityTarget, entities) as (Entity & CommonEntity)[];
+            return await this.transactionalQueryRunner.manager.save(entityInstance, options);
         }
         return super.save(entities, options);
     }
@@ -57,8 +57,8 @@ export class CommonRepository<Entity> extends Repository<Entity> {
     async saveBulkAlt<T extends DeepPartial<Entity>>(entities: T[], options?: SaveOptions): Promise<Entity[]> {
         entities.forEach(entity => omit(entity));
         if (this.isTransactional()) {
-            const entityInstance = this.queryRunner.manager.create(this.EntityTarget, entities) as (Entity & CommonEntity)[];
-            return await this.queryRunner.manager.save(entityInstance, options);
+            const entityInstance = this.transactionalQueryRunner.manager.create(this.EntityTarget, entities) as (Entity & CommonEntity)[];
+            return await this.transactionalQueryRunner.manager.save(entityInstance, options);
         }
         return super.save(entities, options);
     }
@@ -73,14 +73,14 @@ export class CommonRepository<Entity> extends Repository<Entity> {
             partialEntity.updatedBy = req.user.auth.id;
         }
         if (this.isTransactional()) {
-            return this.queryRunner.manager.update(this.EntityTarget, criteria, partialEntity);
+            return this.transactionalQueryRunner.manager.update(this.EntityTarget, criteria, partialEntity);
         }
         return super.update(criteria, partialEntity);
     }
 
     decrement(conditions: FindConditions<Entity>, propertyPath: string, value: number | string): Promise<UpdateResult> {
         if (this.isTransactional()) {
-            return this.queryRunner.manager.decrement(this.EntityTarget, conditions, propertyPath, value);
+            return this.transactionalQueryRunner.manager.decrement(this.EntityTarget, conditions, propertyPath, value);
         }
         return super.decrement(conditions, propertyPath, value);
     }
@@ -91,7 +91,7 @@ export class CommonRepository<Entity> extends Repository<Entity> {
             opts.loadRelationIds = true;
         }
         if (this.isTransactional()) {
-            return this.queryRunner.manager.find(this.EntityTarget, opts);
+            return this.transactionalQueryRunner.manager.find(this.EntityTarget, opts);
         }
         return super.find(opts);
     }
@@ -102,7 +102,7 @@ export class CommonRepository<Entity> extends Repository<Entity> {
             opts.loadRelationIds = true;
         }
         if (this.isTransactional()) {
-            return this.queryRunner.manager.findOne(this.EntityTarget, options);
+            return this.transactionalQueryRunner.manager.findOne(this.EntityTarget, options);
         }
         return super.findOne(conditions, opts);
     }

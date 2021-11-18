@@ -87,7 +87,7 @@ export class AuthService extends Service<Auth>{
             const auth = await this.createAlt(authDto, undefined, this.writeErrorHandler);
             if (isEmailVerification()) {
                 const verifyTokenDto = new VerifyTokenDto(auth.id, AuthService.generateRandomHash());
-                const verifyToken = await this.repository.queryRunner.manager.save(VerifyToken, verifyTokenDto) as VerifyToken & CommonEntity;
+                const verifyToken = await this.repository.transactionalQueryRunner.manager.save(VerifyToken, verifyTokenDto) as VerifyToken & CommonEntity;
                 await this.sendVerificationEmail(auth, verifyToken, host);
                 await this.commitTransaction();
                 return new SuccessDto("User registered successfully. Check your email for the verification.");
@@ -220,6 +220,10 @@ export class AuthService extends Service<Auth>{
             };
 
         } catch (err: any) {
+            this.logger.error(err);
+            if (returnError()) {
+                throw err;
+            }
             throw new HttpException(AuthErrors.AUTH_500_LOGIN, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
