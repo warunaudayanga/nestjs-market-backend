@@ -203,7 +203,7 @@ export class AuthService extends Service<Auth>{
                 return Promise.reject(new HttpException(AuthErrors.AUTH_401_INVALID, HttpStatus.UNAUTHORIZED));
             }
 
-            if (!auth.verified) {
+            if (isEmailVerification() && !auth.verified) {
                 return Promise.reject(new HttpException(AuthErrors.AUTH_401_NOT_VERIFIED, HttpStatus.UNAUTHORIZED));
             }
 
