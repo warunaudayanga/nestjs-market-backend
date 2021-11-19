@@ -7,11 +7,13 @@ export class AuthDto extends Auth {
 
     constructor(registerDto: RegisterDto) {
         super();
-        const cryptData = AuthService.generatePassword(registerDto.password);
+        if (registerDto.password) {
+            const cryptData = AuthService.generatePassword(registerDto.password);
+            this.password = cryptData.password;
+            this.salt = cryptData.salt;
+        }
         this.email = registerDto.email;
         this.nic = registerDto?.nic.toUpperCase();
-        this.password = cryptData.password;
-        this.salt = cryptData.salt;
         this.profile = registerDto.getUserDto();
     }
 

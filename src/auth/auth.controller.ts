@@ -19,6 +19,7 @@ import { GetAllDto } from "../common/dto/getAllDto";
 import { GetAllResponse } from "../common/entity/entity.interfaces";
 import { Err } from "../common/entity/entity.errors";
 import { isEmailVerification } from "../common/methods/common.methods";
+import { UpdateDto } from "./dto/update.dto";
 
 @Controller({ path: "auth", scope: Scope.REQUEST })
 export class AuthController {
@@ -43,10 +44,10 @@ export class AuthController {
     }
 
     @UseGuards(JwtAuthGuard)
-    @Post("update")
-    update(@Body() registerDto: RegisterDto): Promise<SuccessDto> {
+    @Patch("update")
+    update(@Query("id") id: string, @Body() updateDto: UpdateDto): Promise<Auth> {
         if (!isEmailVerification()) {
-            return this.authService.updateRegistration(new RegisterDto(registerDto));
+            return this.authService.updateRegistration(id, new UpdateDto(updateDto));
         }
         return Promise.reject(this.authService.gerError(Err.E_405));
     }
@@ -100,38 +101,38 @@ export class AuthController {
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles(AuthType.ADMIN)
     @Patch("changeType")
-    changeType(@Query("user_id") user_id: string, @Body("type") type: AuthType): Promise<SuccessDto> {
-        return this.authService.changeType(user_id, type);
+    changeType(@Query("id") id: string, @Body("type") type: AuthType): Promise<SuccessDto> {
+        return this.authService.changeType(id, type);
     }
 
     @UseGuards(JwtAuthGuard)
     @Patch("activate")
-    activate(@Query("user_id") user_id: string): Promise<SuccessDto> {
-        return this.authService.activate(user_id);
+    activate(@Query("id") id: string): Promise<SuccessDto> {
+        return this.authService.activate(id);
     }
 
     @UseGuards(JwtAuthGuard)
     @Patch("deactivate")
-    deactivate(@Query("user_id") user_id: string): Promise<SuccessDto> {
-        return this.authService.deactivate(user_id);
+    deactivate(@Query("id") id: string): Promise<SuccessDto> {
+        return this.authService.deactivate(id);
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Patch("delete")
-    delete(@Query("user_id") user_id: string): Promise<SuccessDto> {
-        return this.authService.delete(user_id);
+    delete(@Query("id") id: string): Promise<SuccessDto> {
+        return this.authService.delete(id);
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Patch("undelete")
-    undelete(@Query("user_id") user_id: string): Promise<SuccessDto> {
-        return this.authService.undelete(user_id);
+    undelete(@Query("id") id: string): Promise<SuccessDto> {
+        return this.authService.undelete(id);
     }
 
     @UseGuards(JwtAuthGuard)
     @Get("get")
-    get(@Query("user_id") user_id: string, @Query("eager") eager?: "true" | "false"): Promise<Auth> {
-        return this.authService.get(user_id, { loadRelationIds: eager !== "true" });
+    get(@Query("id") id: string, @Query("eager") eager?: "true" | "false"): Promise<Auth> {
+        return this.authService.get(id, { loadRelationIds: eager !== "true" });
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)
@@ -150,8 +151,8 @@ export class AuthController {
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles(AuthType.ADMIN)
     @Delete("hardDelete")
-    hardDelete(@Query("user_id") user_id: string): Promise<SuccessDto> {
-        return this.authService.hardDelete(user_id);
+    hardDelete(@Query("id") id: string): Promise<SuccessDto> {
+        return this.authService.hardDelete(id);
     }
 
 }

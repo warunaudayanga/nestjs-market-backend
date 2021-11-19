@@ -26,6 +26,7 @@ import { UserErrors } from "../../market/user/dto/user.errors.dto";
 import { ChangePasswordDto } from "../dto/change-password.dto";
 import { Err } from "../../common/entity/entity.errors";
 import { isEmailVerification } from "../../common/methods/common.methods";
+import { UpdateDto } from "../dto/update.dto";
 
 @Injectable()
 export class AuthService extends Service<Auth>{
@@ -100,9 +101,9 @@ export class AuthService extends Service<Auth>{
         }
     }
 
-    async updateRegistration(registerDto: RegisterDto): Promise<SuccessDto> {
-        const authDto = new AuthDto(registerDto);
-        return await this.updateAlt(authDto, undefined, this.writeErrorHandler);
+    async updateRegistration(id: string, updateDto: UpdateDto): Promise<Auth> {
+        const authDto = new AuthDto(updateDto);
+        return await this.createAlt({ ...authDto, id }, undefined, this.writeErrorHandler);
     }
 
     async verify(verifyTokenDto: VerifyTokenDto): Promise<string> {

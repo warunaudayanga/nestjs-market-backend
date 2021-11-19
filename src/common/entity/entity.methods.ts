@@ -1,6 +1,6 @@
 import { GetAllDto } from "../dto/getAllDto";
 
-const omit = (obj, keys?: string[]): void => {
+const omit = <T extends { [key: string]: any }>(obj: T, keys?: (keyof T)[]): void => {
     if (obj) {
         Object.keys(obj).forEach(key => {
             return (obj[key] === undefined || keys?.includes(key)) && delete obj[key];

@@ -33,7 +33,7 @@ export class Auth {
     @Column({ default: false })
     verified: boolean;
 
-    @OneToOne(() => User, { cascade: true, eager: true, onDelete: "CASCADE" })
+    @OneToOne(() => User, { cascade: true, eager: true, onUpdate: "NO ACTION", onDelete: "CASCADE" })
     @JoinColumn()
     profile: User;
 
