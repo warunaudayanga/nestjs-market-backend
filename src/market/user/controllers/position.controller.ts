@@ -10,6 +10,7 @@ import { Roles } from "../../../auth/decorators/roles.decorator";
 import { FindConditions } from "typeorm/find-options/FindConditions";
 import { GetAllDto } from "../../../common/dto/getAllDto";
 import { GetAllResponse } from "../../../common/entity/entity.interfaces";
+import { Not } from "typeorm";
 
 @Controller({ path: "user/position", scope: Scope.REQUEST })
 export class PositionController {
@@ -58,7 +59,7 @@ export class PositionController {
 
     @Get("getAll")
     getAll(@Query() getAllDto: GetAllDto): Promise<GetAllResponse<Position>> {
-        return this.positionService.getAll(getAllDto);
+        return this.positionService.getAll(getAllDto, { where: { name: Not("Admin") } });
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)

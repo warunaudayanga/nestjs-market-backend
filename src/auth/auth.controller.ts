@@ -150,7 +150,7 @@ export class AuthController {
 
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles(AuthType.ADMIN)
-    @Delete("hardDelete")
+    @Delete("delete")
     hardDelete(@Query("id") id: string): Promise<SuccessDto> {
         return this.authService.hardDelete(id);
     }
