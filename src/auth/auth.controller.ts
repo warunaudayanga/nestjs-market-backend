@@ -8,11 +8,11 @@ import { Response } from "express";
 import { JwtAuthGuard } from "./guards/jwt-auth.guard";
 import { Roles } from "./decorators/roles.decorator";
 import { RolesGuard } from "./guards/roles.guard";
-import { AuthType } from "./enums/auth.enums";
+import { AuthType, StatusString } from "./enums/auth.enums";
 import { SuccessDto } from "../common/entity/entity.success.dto";
 import { UserAuth } from "./decorators/auth.decorator";
 import { Auth } from "./entities/auth.entity";
-import { FindConditions } from "typeorm";
+import { FindConditions, Not } from "typeorm";
 import { ChangePasswordDto } from "./dto/change-password.dto";
 import { RegisterDto } from "./dto/register.dto";
 import { GetAllDto } from "../common/dto/getAllDto";
@@ -145,7 +145,7 @@ export class AuthController {
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Get("getAll")
     getAll(@Query() getAllDto: GetAllDto): Promise<GetAllResponse<Auth>> {
-        return this.authService.getAll(getAllDto);
+        return this.authService.getAll(getAllDto, { where: { statusString: Not(StatusString.DELETED) } });
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)
