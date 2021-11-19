@@ -80,12 +80,12 @@ export class AuthService extends Service<Auth>{
         return hash === generatedHash;
     }
 
-    async register(registerDto: RegisterDto, host: string): Promise<SuccessDto | Auth> {
+    async register(registerDto: RegisterDto, host?: string): Promise<SuccessDto | Auth> {
         await this.startTransaction();
         try {
             const authDto = new AuthDto(registerDto);
             const auth = await this.createAlt(authDto, undefined, this.writeErrorHandler);
-            if (isEmailVerification()) {
+            if (isEmailVerification() && host) {
                 const verifyTokenDto = new VerifyTokenDto(auth.id, AuthService.generateRandomHash());
                 const verifyToken = await this.repository.transactionalQueryRunner.manager.save(VerifyToken, verifyTokenDto) as VerifyToken & CommonEntity;
                 await this.sendVerificationEmail(auth, verifyToken, host);
@@ -98,6 +98,11 @@ export class AuthService extends Service<Auth>{
             await this.rollbackTransaction();
             throw err;
         }
+    }
+
+    async updateRegistration(registerDto: RegisterDto): Promise<SuccessDto> {
+        const authDto = new AuthDto(registerDto);
+        return await this.updateAlt(authDto, undefined, this.writeErrorHandler);
     }
 
     async verify(verifyTokenDto: VerifyTokenDto): Promise<string> {

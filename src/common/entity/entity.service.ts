@@ -29,7 +29,7 @@ export class Service<Entity extends CommonEntity> {
         this.errors = new Errors(entityData);
     }
 
-    protected gerError(key: string): HttpException {
+    public gerError(key: string): HttpException {
         const error = this.errors.get(key);
         return new HttpException(error, error.status);
     }

@@ -1,4 +1,5 @@
-import { Controller, UseGuards, Post, Get, Patch, Res, Body, Query, Headers, Scope, Delete } from "@nestjs/common";
+import { Controller, UseGuards, Post, Get, Patch, Res, Body, Query,
+    Headers, Scope, Delete } from "@nestjs/common";
 import { AuthService } from "./services/auth.service";
 import { AuthDataDto } from "./dto/auth-data.dto";
 import { TokenData } from "./interfaces/token-data.interface";
@@ -16,6 +17,8 @@ import { ChangePasswordDto } from "./dto/change-password.dto";
 import { RegisterDto } from "./dto/register.dto";
 import { GetAllDto } from "../common/dto/getAllDto";
 import { GetAllResponse } from "../common/entity/entity.interfaces";
+import { Err } from "../common/entity/entity.errors";
+import { isEmailVerification } from "../common/methods/common.methods";
 
 @Controller({ path: "auth", scope: Scope.REQUEST })
 export class AuthController {
@@ -24,13 +27,37 @@ export class AuthController {
 
     @Post("register")
     register(@Body() registerDto: RegisterDto, @Headers() headers: any): Promise<SuccessDto | Auth> {
-        return this.authService.register(new RegisterDto(registerDto), headers.host);
+        if (isEmailVerification()) {
+            return this.authService.register(new RegisterDto(registerDto), headers.host);
+        }
+        return Promise.reject(this.authService.gerError(Err.E_405));
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Post("create")
+    create(@Body() registerDto: RegisterDto): Promise<SuccessDto | Auth> {
+        if (!isEmailVerification()) {
+            return this.authService.register(new RegisterDto(registerDto));
+        }
+        return Promise.reject(this.authService.gerError(Err.E_405));
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Post("update")
+    update(@Body() registerDto: RegisterDto): Promise<SuccessDto> {
+        if (!isEmailVerification()) {
+            return this.authService.updateRegistration(new RegisterDto(registerDto));
+        }
+        return Promise.reject(this.authService.gerError(Err.E_405));
     }
 
     @Get("verify")
     async verify(@Res() res: Response, @Query("auth") auth: string, @Query("token") token: string, @Query("baseUrl") baseUrl: string): Promise<void> {
-        const status = await this.authService.verify(new VerifyTokenDto(auth, token));
-        res.redirect(`${decodeURI(baseUrl || "http://localhost:8080")}/verify?status=${status}`);
+        if (isEmailVerification()) {
+            const status = await this.authService.verify(new VerifyTokenDto(auth, token));
+            res.redirect(`${decodeURI(baseUrl || "http://localhost:8080")}/verify?status=${status}`);
+        }
+        return Promise.reject(this.authService.gerError(Err.E_405));
     }
 
     @Post("authenticate")
@@ -40,16 +67,22 @@ export class AuthController {
 
     @Post("requestRecovery")
     requestRecovery(@Body("email") email: string): Promise<SuccessDto> {
-        return this.authService.requestRecovery(email);
+        if (isEmailVerification()) {
+            return this.authService.requestRecovery(email);
+        }
+        return Promise.reject(this.authService.gerError(Err.E_405));
     }
 
     @Get("recovery")
     async verifyRecovery(@Res() res: Response, @Query() verifyTokenDto: VerifyTokenDto): Promise<void> {
-        const response = await this.authService.verifyRecovery(verifyTokenDto);
-        if (typeof response === "string") {
-            return res.redirect("/reset?status=" + response);
+        if (isEmailVerification()) {
+            const response = await this.authService.verifyRecovery(verifyTokenDto);
+            if (typeof response === "string") {
+                return res.redirect("/reset?status=" + response);
+            }
+            res.redirect("/reset?status=success&token=" + response.token);
         }
-        res.redirect("/reset?status=success&token=" + response.token);
+        return Promise.reject(this.authService.gerError(Err.E_405));
     }
 
     @UseGuards(JwtAuthGuard)
@@ -71,29 +104,25 @@ export class AuthController {
         return this.authService.changeType(user_id, type);
     }
 
-    @UseGuards(JwtAuthGuard, RolesGuard)
-    @Roles(AuthType.ADMIN)
+    @UseGuards(JwtAuthGuard)
     @Patch("activate")
     activate(@Query("user_id") user_id: string): Promise<SuccessDto> {
         return this.authService.activate(user_id);
     }
 
-    @UseGuards(JwtAuthGuard, RolesGuard)
-    @Roles(AuthType.ADMIN)
+    @UseGuards(JwtAuthGuard)
     @Patch("deactivate")
     deactivate(@Query("user_id") user_id: string): Promise<SuccessDto> {
         return this.authService.deactivate(user_id);
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)
-    @Roles(AuthType.ADMIN)
     @Patch("delete")
     delete(@Query("user_id") user_id: string): Promise<SuccessDto> {
         return this.authService.delete(user_id);
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)
-    @Roles(AuthType.ADMIN)
     @Patch("undelete")
     undelete(@Query("user_id") user_id: string): Promise<SuccessDto> {
         return this.authService.undelete(user_id);
