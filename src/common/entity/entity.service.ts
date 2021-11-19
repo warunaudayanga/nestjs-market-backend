@@ -274,7 +274,7 @@ export class Service<Entity extends CommonEntity> {
                 }
             }
             await queryRunner2.release();
-            const total = await this.repository.count();
+            const total = await this.repository.count(options);
             return { entities, total, page: toNumber(getAllDto?.page), limit: toNumber(getAllDto?.limit) };
         } catch (err: any) {
             if (eh) {
