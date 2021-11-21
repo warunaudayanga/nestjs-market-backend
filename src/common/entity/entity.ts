@@ -27,13 +27,13 @@ export class CommonEntity {
     @Column({ type: "enum", enum: StatusString, default: StatusString.DEACTIVE })
     statusString: StatusString | string;
 
-    @ManyToOne(() => Auth, { eager: true })
+    @ManyToOne(() => Auth)
     createdBy: UserInfo | string;
 
     @CreateDateColumn({ insert: false, update: false })
     createdAt: Date;
 
-    @ManyToOne(() => Auth, { eager: true })
+    @ManyToOne(() => Auth)
     @JoinColumn()
     updatedBy: UserInfo | string;
 
