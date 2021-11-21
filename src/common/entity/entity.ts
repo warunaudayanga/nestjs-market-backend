@@ -1,5 +1,4 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { Auth } from "../../auth/entities/auth.entity";
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
 import { StatusString } from "./entity.enums";
 import { UserInfo } from "./entity.interfaces";
 
@@ -27,14 +26,13 @@ export class CommonEntity {
     @Column({ type: "enum", enum: StatusString, default: StatusString.DEACTIVE })
     statusString: StatusString | string;
 
-    @ManyToOne(() => Auth)
+    @Column({ type: "varchar", default: null })
     createdBy: UserInfo | string;
 
     @CreateDateColumn({ insert: false, update: false })
     createdAt: Date;
 
-    @ManyToOne(() => Auth)
-    @JoinColumn()
+    @Column({ type: "varchar", default: null })
     updatedBy: UserInfo | string;
 
     @Column({

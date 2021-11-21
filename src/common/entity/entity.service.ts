@@ -228,9 +228,9 @@ export class Service<Entity extends CommonEntity> {
             return Promise.reject(this.gerError(Err.E_400_EMPTY_ID));
         }
         const entity = await this.getOne(id, options, eh);
-        const queryRunner2 = await getConnection().createQueryRunner();
+        const queryRunner = await getConnection().createQueryRunner();
         if (entity.createdBy) {
-            const creator = await queryRunner2.manager.findOne(Auth, { where: { id: entity.createdBy } } );
+            const creator = await queryRunner.manager.findOne(Auth, { where: { id: entity.createdBy } } );
             entity.createdBy = {
                 id: creator.id,
                 firstName: creator.profile.firstName,
@@ -238,14 +238,14 @@ export class Service<Entity extends CommonEntity> {
             };
         }
         if (entity.updatedBy) {
-            const updater = await queryRunner2.manager.findOne(Auth, { where: { id: entity.updatedBy } } );
+            const updater = await queryRunner.manager.findOne(Auth, { where: { id: entity.updatedBy } } );
             entity.updatedBy = {
                 id: updater.id,
                 firstName: updater.profile.firstName,
                 lastName: updater.profile.lastName
             };
         }
-        queryRunner2.release();
+        queryRunner.release();
         return entity;
     }
 
@@ -254,10 +254,10 @@ export class Service<Entity extends CommonEntity> {
         const opt = options ? { ...options, ...getAllOpts } : { ...getAllOpts };
         try {
             const entities = await this.repository.find(opt);
-            const queryRunner2 = await getConnection().createQueryRunner();
+            const queryRunner = await getConnection().createQueryRunner();
             for await (const entity of entities) {
                 if (entity.createdBy) {
-                    const creator = await queryRunner2.manager.findOne(Auth, { where: { id: entity.createdBy } } );
+                    const creator = await queryRunner.manager.findOne(Auth, { where: { id: entity.createdBy } } );
                     entity.createdBy = {
                         id: creator.id,
                         firstName: creator.profile.firstName,
@@ -265,7 +265,7 @@ export class Service<Entity extends CommonEntity> {
                     };
                 }
                 if (entity.updatedBy) {
-                    const updater = await queryRunner2.manager.findOne(Auth, { where: { id: entity.updatedBy } } );
+                    const updater = await queryRunner.manager.findOne(Auth, { where: { id: entity.updatedBy } } );
                     entity.updatedBy = {
                         id: updater.id,
                         firstName: updater.profile.firstName,
@@ -273,7 +273,7 @@ export class Service<Entity extends CommonEntity> {
                     };
                 }
             }
-            await queryRunner2.release();
+            await queryRunner.release();
             const total = await this.repository.count(options);
             return { entities, total, page: toNumber(getAllDto?.page), limit: toNumber(getAllDto?.limit) };
         } catch (err: any) {
