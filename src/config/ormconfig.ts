@@ -11,7 +11,7 @@ export const dev: TypeOrmModuleOptions = {
     synchronize: true
 };
 
-export const prod: TypeOrmModuleOptions = {
+export const jawsDB: TypeOrmModuleOptions = {
     type: "mysql",
     host: "y5svr1t2r5xudqeq.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
     port: 3306,
@@ -21,3 +21,17 @@ export const prod: TypeOrmModuleOptions = {
     entities: ["dist/**/*.entity{.ts,.js}"],
     synchronize: false
 };
+
+// mysql://bc20bc43d0a19e:9fea8399@us-cdbr-east-04.cleardb.com/heroku_125faf3373d2fbb?reconnect=true
+export const clearDB: TypeOrmModuleOptions = {
+    type: "mysql",
+    host: "us-cdbr-east-04.cleardb.com",
+    port: 3306,
+    username: "bc20bc43d0a19e",
+    password: "9fea8399",
+    database: "heroku_125faf3373d2fbb",
+    entities: ["dist/**/*.entity{.ts,.js}"],
+    synchronize: false
+};
+
+export { clearDB as prod };
