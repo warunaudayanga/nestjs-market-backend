@@ -35,4 +35,16 @@ export const clearDB: TypeOrmModuleOptions = {
     synchronize: false
 };
 
-export { clearDB as prod };
+// mysql://bc20bc43d0a19e:9fea8399@us-cdbr-east-04.cleardb.com/heroku_125faf3373d2fbb?reconnect=true
+export const envDB: TypeOrmModuleOptions = {
+    type: "mysql",
+    host: process.env.DB_HOST,
+    port: !isNaN(Number(process.env.DB_PORT)) ? Number(process.env.DB_PORT) : 3306,
+    username: process.env.DB_USER,
+    password: process.env.DB_AUTH,
+    database: process.env.DB_PATH,
+    entities: ["dist/**/*.entity{.ts,.js}"],
+    synchronize: process.env.DB_SYNC === "true"
+};
+
+export { envDB as prod };
