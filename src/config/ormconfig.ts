@@ -11,6 +11,7 @@ export const dev: TypeOrmModuleOptions = {
     synchronize: true
 };
 
+// noinspection JSUnusedGlobalSymbols
 export const jawsDB: TypeOrmModuleOptions = {
     type: "mysql",
     host: "y5svr1t2r5xudqeq.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",

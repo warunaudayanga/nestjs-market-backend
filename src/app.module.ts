@@ -25,7 +25,7 @@ import { SaleModule } from "./market/sale/sale.module";
         ServeStaticModule.forRoot({
             rootPath: join(__dirname, "../dist/public")
         }),
-        TypeOrmModule.forRoot({ url: process.env.NODE_ENV === "production" ? prod : dev }),
+        TypeOrmModule.forRoot(process.env.NODE_ENV === "production" ? prod : dev),
         // TypeOrmModule.forRoot(prod),
         CommonModule,
         // SeedingModule,
