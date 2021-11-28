@@ -11,6 +11,7 @@ import { AccessErrors } from "../dto/access.errors.dto";
 import { AccessRepository } from "../repositories/access.repository";
 import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
 import { SuccessDto } from "../../../common/entity/entity.success.dto";
+import { SocketService } from "../../../common/services/socket.service";
 
 @Injectable({ scope: Scope.REQUEST })
 export class AccessService extends Service<Access> {
@@ -28,9 +29,10 @@ export class AccessService extends Service<Access> {
     constructor(
         @InjectRepository(AccessRepository) private accessRepository: AccessRepository,
         @Inject(REQUEST) protected readonly req: Request,
+        protected socketService: SocketService,
         protected logger: LoggerService
     ) {
-        super(["access"], accessRepository, req, logger);
+        super(["access"], accessRepository, req, logger, socketService);
     }
 
     create<T extends DeepPartial<Access> & DeepPartial<CommonEntity>>(entity: T, options?: SaveOptions): Promise<Access> {

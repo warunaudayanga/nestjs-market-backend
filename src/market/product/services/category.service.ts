@@ -8,6 +8,7 @@ import { Service } from "../../../common/entity/entity.service";
 import { CategoryRepository } from "../repositories/category.repository";
 import { CategoryErrors } from "../dto/category.errors.dto";
 import { SuccessDto } from "../../../common/entity/entity.success.dto";
+import { SocketService } from "../../../common/services/socket.service";
 
 @Injectable({ scope: Scope.REQUEST })
 export class CategoryService extends Service<Category> {
@@ -21,9 +22,10 @@ export class CategoryService extends Service<Category> {
     constructor(
         @InjectRepository(CategoryRepository) private categoryRepository: CategoryRepository,
         @Inject(REQUEST) protected readonly req: Request,
+        protected socketService: SocketService,
         protected logger: LoggerService
     ) {
-        super(["category", "name"], categoryRepository, req, logger);
+        super(["category", "name"], categoryRepository, req, logger, socketService);
     }
 
     delete(id: string): Promise<SuccessDto> {

@@ -12,6 +12,7 @@ import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity
 import { SuccessDto } from "../../../common/entity/entity.success.dto";
 import { DataService } from "../../data/services/data.service";
 import { Err } from "../../../common/entity/entity.errors";
+import { SocketService } from "../../../common/services/socket.service";
 
 @Injectable({ scope: Scope.REQUEST })
 export class SupplierService extends Service<Supplier> {
@@ -19,10 +20,11 @@ export class SupplierService extends Service<Supplier> {
     constructor(
         @InjectRepository(SupplierRepository) private supplierRepository: SupplierRepository,
         @Inject(REQUEST) protected readonly req: Request,
+        protected socketService: SocketService,
         protected logger: LoggerService,
         protected dataService: DataService
     ) {
-        super(["supplier"], supplierRepository, req, logger, dataService);
+        super(["supplier"], supplierRepository, req, logger, socketService, dataService);
     }
 
     async create<T extends DeepPartial<Supplier> & DeepPartial<CommonEntity>>(entity: T): Promise<Supplier> {

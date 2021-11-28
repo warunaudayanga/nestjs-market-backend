@@ -14,6 +14,7 @@ import { returnError } from "../methods/errors";
 import { GetAllDto } from "../dto/getAllDto";
 import { GetAllResponse } from "./entity.interfaces";
 import { Auth } from "../../auth/entities/auth.entity";
+import { SocketService } from "../services/socket.service";
 
 export class Service<Entity extends CommonEntity> {
 
@@ -24,9 +25,16 @@ export class Service<Entity extends CommonEntity> {
         protected repository: CommonRepository<Entity>,
         protected readonly req: Request,
         protected logger: LoggerService,
+        protected socketService?: SocketService,
         protected dataService?: DataService
     ) {
         this.errors = new Errors(entityData);
+    }
+
+    public emit(entity: Entity): void {
+        if (this.socketService) {
+            this.socketService.emit<Entity>(this.entityData[0], entity);
+        }
     }
 
     public gerError(key: string): HttpException {
@@ -72,10 +80,14 @@ export class Service<Entity extends CommonEntity> {
         }
     }
 
-    async create<T extends DeepPartial<Entity> & DeepPartial<CommonEntity>>(entity: T, options?: SaveOptions, eh?: (err: any) => Error | void): Promise<Entity> {
+    async create<T extends DeepPartial<Entity> & DeepPartial<CommonEntity>>(entity: T, options?: SaveOptions, eh?: (err: any) => Error | void, interceptEmit?: boolean): Promise<Entity> {
 
         try {
-            return await this.repository.saveAuth(entity, this.req as ReqAuth, options);
+            let newEntity = await this.repository.saveAuth(entity, this.req as ReqAuth, options);
+            if (!interceptEmit) {
+                this.emit(newEntity);
+            }
+            return newEntity;
         } catch (err: any) {
             if (eh) {
                 const e = eh(err);
@@ -94,10 +106,14 @@ export class Service<Entity extends CommonEntity> {
         }
     }
 
-    async createAlt<T extends DeepPartial<Entity>>(entity: T, options?: SaveOptions, eh?: (err: any) => Error | void): Promise<Entity> {
+    async createAlt<T extends DeepPartial<Entity>>(entity: T, options?: SaveOptions, eh?: (err: any) => Error | void, interceptEmit?: boolean): Promise<Entity> {
 
         try {
-            return await this.repository.saveAlt(entity, options);
+            let newEntity = await this.repository.saveAlt(entity, options);
+            if (!interceptEmit) {
+                this.emit(newEntity);
+            }
+            return newEntity;
         } catch (err: any) {
             if (eh) {
                 const e = eh(err);

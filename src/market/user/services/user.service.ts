@@ -11,6 +11,7 @@ import { UserErrors } from "../dto/user.errors.dto";
 import { DeepPartial } from "typeorm";
 import { Err } from "../../../common/entity/entity.errors";
 import { CommonEntity } from "../../../common/entity/entity";
+import { SocketService } from "../../../common/services/socket.service";
 
 @Injectable({ scope: Scope.REQUEST })
 export class UserService extends Service<User>{
@@ -24,9 +25,10 @@ export class UserService extends Service<User>{
     constructor(
         @InjectRepository(UserRepository) private userRepository: UserRepository,
         @Inject(REQUEST) protected readonly req: Request,
+        protected socketService: SocketService,
         protected logger: LoggerService
     ) {
-        super(["user", "nic"], userRepository, req, logger);
+        super(["user", "nic"], userRepository, req, logger, socketService);
     }
 
     create<T extends DeepPartial<User> & DeepPartial<CommonEntity>>(): Promise<T> {

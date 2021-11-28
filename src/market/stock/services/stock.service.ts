@@ -14,6 +14,7 @@ import { SuccessDto } from "../../../common/entity/entity.success.dto";
 import { Purchase } from "../../purchase/entities/purchase.entity";
 import { Err } from "../../../common/entity/entity.errors";
 import { returnError } from "../../../common/methods/errors";
+import { SocketService } from "../../../common/services/socket.service";
 
 @Injectable({ scope: Scope.REQUEST })
 export class StockService extends Service<Stock> {
@@ -39,9 +40,10 @@ export class StockService extends Service<Stock> {
     constructor(
         @InjectRepository(StockRepository) private stockRepository: StockRepository,
         @Inject(REQUEST) protected readonly req: Request,
+        protected socketService: SocketService,
         protected logger: LoggerService
     ) {
-        super(["stock"], stockRepository, req, logger);
+        super(["stock"], stockRepository, req, logger, socketService);
     }
 
     create<T extends DeepPartial<Stock & CommonEntity>>(stock: T): Promise<Stock> {

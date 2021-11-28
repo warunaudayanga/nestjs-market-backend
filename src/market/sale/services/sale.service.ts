@@ -20,6 +20,7 @@ import { returnError } from "../../../common/methods/errors";
 import { GetAllDto } from "../../../common/dto/getAllDto";
 import { paginate, toNumber } from "../../../common/entity/entity.methods";
 import { GetAllResponse } from "../../../common/entity/entity.interfaces";
+import { SocketService } from "../../../common/services/socket.service";
 
 @Injectable({ scope: Scope.REQUEST })
 export class SaleService extends Service<Sale> {
@@ -33,10 +34,11 @@ export class SaleService extends Service<Sale> {
     constructor(
         @InjectRepository(SaleRepository) private saleRepository: SaleRepository,
         @Inject(REQUEST) protected readonly req: Request,
+        protected socketService: SocketService,
         protected logger: LoggerService,
         protected dataService: DataService
     ) {
-        super(["sale", "code"], saleRepository, req, logger, dataService);
+        super(["sale", "code"], saleRepository, req, logger, socketService, dataService);
     }
 
     getInvoiceDto(sales: Sale[]): SaleInvoiceDto {
@@ -62,6 +64,7 @@ export class SaleService extends Service<Sale> {
                 await this.repository.queryRunner.manager.decrement(Stock, { id }, "qty", sale.qty);
             }
             await this.commitTransaction();
+            // TODO: emit()
             return sales;
         } catch (err: any) {
             await this.rollbackTransaction();

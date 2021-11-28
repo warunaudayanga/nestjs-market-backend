@@ -6,6 +6,7 @@ import { LoggerService } from "../../../common/services/logger.service";
 import { REQUEST } from "@nestjs/core";
 import { Service } from "../../../common/entity/entity.service";
 import { PositionRepository } from "../repositories/position.repository";
+import { SocketService } from "../../../common/services/socket.service";
 
 @Injectable({ scope: Scope.REQUEST })
 export class PositionService extends Service<Position>{
@@ -13,9 +14,10 @@ export class PositionService extends Service<Position>{
     constructor(
         @InjectRepository(PositionRepository) private positionRepository: PositionRepository,
         @Inject(REQUEST) protected readonly req: Request,
+        protected socketService: SocketService,
         protected logger: LoggerService
     ) {
-        super(["position", "name"], positionRepository, req, logger);
+        super(["position", "name"], positionRepository, req, logger, socketService);
     }
 
 }

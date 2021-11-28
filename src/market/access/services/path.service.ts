@@ -8,6 +8,7 @@ import { Service } from "../../../common/entity/entity.service";
 import { PathRepository } from "../repositories/path.repository";
 import { PathErrors } from "../dto/path.errors.dto";
 import { SuccessDto } from "../../../common/entity/entity.success.dto";
+import { SocketService } from "../../../common/services/socket.service";
 
 @Injectable({ scope: Scope.REQUEST })
 export class PathService extends Service<Path> {
@@ -21,9 +22,10 @@ export class PathService extends Service<Path> {
     constructor(
         @InjectRepository(PathRepository) private pathRepository: PathRepository,
         @Inject(REQUEST) protected readonly req: Request,
+        protected socketService: SocketService,
         protected logger: LoggerService
     ) {
-        super(["path", "path"], pathRepository, req, logger);
+        super(["path", "path"], pathRepository, req, logger, socketService);
     }
 
     delete(id: string): Promise<SuccessDto> {

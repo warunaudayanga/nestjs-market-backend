@@ -13,6 +13,7 @@ import { SuccessDto } from "../../../common/entity/entity.success.dto";
 import { ProductErrors } from "../dto/product.errors.dto";
 import { DataService } from "../../data/services/data.service";
 import { Err } from "../../../common/entity/entity.errors";
+import { SocketService } from "../../../common/services/socket.service";
 
 @Injectable({ scope: Scope.REQUEST })
 export class ProductService extends Service<Product> {
@@ -26,10 +27,11 @@ export class ProductService extends Service<Product> {
     constructor(
         @InjectRepository(ProductRepository) private productRepository: ProductRepository,
         @Inject(REQUEST) protected readonly req: Request,
+        protected socketService: SocketService,
         protected logger: LoggerService,
         protected dataService: DataService
     ) {
-        super(["product"], productRepository, req, logger, dataService);
+        super(["product"], productRepository, req, logger, socketService, dataService);
     }
 
     async create<T extends DeepPartial<Product> & DeepPartial<CommonEntity>>(entity: T): Promise<Product> {

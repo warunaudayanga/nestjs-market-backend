@@ -190,6 +190,23 @@ export class AuthService extends Service<Auth>{
         return Promise.reject(new HttpException(AuthErrors.AUTH_401_INVALID_TOKEN, HttpStatus.UNAUTHORIZED));
     }
 
+    public verifyAuthToken(bearerToken: string): { sub: string, iat: number, exp: number } {
+        const token = bearerToken.replace("Bearer ", "");
+        return this.jwtService.verify(token, {
+            publicKey: AuthService.getPublicKey(),
+            algorithms: ["RS256"]
+        });
+    }
+
+    public async getUserByToken(bearerToken: string): Promise<Auth> {
+        const payload = this.verifyAuthToken(bearerToken);
+        let user = await this.getSensitive({ id: payload.sub });
+        if (!user || typeof user === "number") {
+            return null;
+        }
+        return user;
+    }
+
     async authenticate(authDataDto: AuthDataDto): Promise<TokenData> {
 
         try {
