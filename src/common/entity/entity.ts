@@ -1,6 +1,5 @@
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
 import { StatusString } from "./entity.enums";
-import { UserInfo } from "./entity.interfaces";
 
 @Entity({ synchronize: false })
 export class CommonEntity {
@@ -27,13 +26,13 @@ export class CommonEntity {
     statusString: StatusString | string;
 
     @Column({ type: "varchar", default: null })
-    createdBy: UserInfo | string;
+    createdBy: string;
 
     @CreateDateColumn({ insert: false, update: false })
     createdAt: Date;
 
     @Column({ type: "varchar", default: null })
-    updatedBy: UserInfo | string;
+    updatedBy: string;
 
     @Column({
         type: "datetime",

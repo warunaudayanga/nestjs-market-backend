@@ -12,6 +12,7 @@ export interface GetAllResponse<Entity> {
     limit: number;
 }
 
+// noinspection JSUnusedGlobalSymbols
 export interface UserInfo {
     id: string,
     firstName: string,

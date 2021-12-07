@@ -62,10 +62,12 @@ export class StockService extends Service<Stock> {
         return super.decrement({ id }, "qty", qty, StockService.qtyErrorHandler);
     }
 
+    // noinspection JSUnusedGlobalSymbols
     async check(product: string, price: number): Promise<boolean> {
         return await super.count({ product, price }) > 0;
     }
 
+    // noinspection JSUnusedGlobalSymbols
     async add(purchase: Purchase): Promise<void> {
         const product = typeof purchase.product === "string" ? purchase.product : purchase.product.id;
         try {

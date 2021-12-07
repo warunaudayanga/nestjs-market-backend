@@ -24,6 +24,7 @@ export const jawsDB: TypeOrmModuleOptions = {
 };
 
 // mysql://bc20bc43d0a19e:9fea8399@us-cdbr-east-04.cleardb.com/heroku_125faf3373d2fbb?reconnect=true
+// noinspection JSUnusedGlobalSymbols
 export const clearDB: TypeOrmModuleOptions = {
     type: "mysql",
     host: "us-cdbr-east-04.cleardb.com",

@@ -26,7 +26,7 @@ import { SaleModule } from "./market/sale/sale.module";
             rootPath: join(__dirname, "../dist/public")
         }),
         TypeOrmModule.forRoot(process.env.NODE_ENV === "production" ? prod : dev),
-        // TypeOrmModule.forRoot(prod),
+        // TypeOrmModule.forRoot(jawsDB),
         CommonModule,
         // SeedingModule,
         AuthModule,
