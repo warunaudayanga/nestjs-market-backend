@@ -80,11 +80,10 @@ export class Service<Entity extends CommonEntity> {
     }
 
     async create<T extends DeepPartial<Entity> & DeepPartial<CommonEntity>>(entity: T, options?: SaveOptions, eh?: (err: any) => Error | void, interceptEmit?: boolean): Promise<Entity> {
-
         try {
             let newEntity = await this.repository.saveAuth(entity, this.req as ReqAuth, options);
             if (!interceptEmit) {
-                this.emit(newEntity);
+                this.emit(await this.get(newEntity.id, { loadRelationIds: false }));
             }
             return newEntity;
         } catch (err: any) {
@@ -110,7 +109,7 @@ export class Service<Entity extends CommonEntity> {
         try {
             let newEntity = await this.repository.saveAlt(entity, options);
             if (!interceptEmit) {
-                this.emit(newEntity);
+                this.emit(await this.get(newEntity.id, { loadRelationIds: false }));
             }
             return newEntity;
         } catch (err: any) {
