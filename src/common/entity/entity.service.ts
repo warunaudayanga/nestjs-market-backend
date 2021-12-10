@@ -1,5 +1,13 @@
 import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
-import { DeepPartial, FindConditions, FindManyOptions, FindOneOptions, getConnection, SaveOptions } from "typeorm";
+import {
+    DeepPartial,
+    FindConditions,
+    FindManyOptions,
+    FindOneOptions,
+    getConnection,
+    ObjectID,
+    SaveOptions
+} from "typeorm";
 import { HttpException } from "@nestjs/common";
 import { Request } from "express";
 import { CommonRepository, ReqAuth } from "./entity.repository";
@@ -171,13 +179,16 @@ export class Service<Entity extends CommonEntity> {
     //     }
     // }
 
-    async update(condition: string | FindConditions<Entity>, partialEntity: QueryDeepPartialEntity<Entity> & Partial<CommonEntity>, eh?: (err: any) => Error | void, alt?: boolean): Promise<SuccessDto> {
+    async update(condition: string | number | Date | ObjectID | FindConditions<Entity>, partialEntity: QueryDeepPartialEntity<Entity> & Partial<CommonEntity>, eh?: (err: any) => Error | void, alt?: boolean, interceptEmit?: boolean): Promise<SuccessDto> {
         if (!condition) {
             return Promise.reject(this.gerError(Err.E_400_EMPTY_ID));
         }
         try {
             const updateResult = await this.repository.update(condition, partialEntity, !alt ? this.req as ReqAuth : undefined);
             if (updateResult.affected > 0) {
+                if (!interceptEmit) {
+                    this.emit(await this.get(condition, { loadRelationIds: false }));
+                }
                 return new SuccessDto(`${toFirstCase(this.entityData[0])} updated successfully.`);
             }
             return Promise.reject(this.gerError(Err.E_404_ID));
@@ -215,9 +226,9 @@ export class Service<Entity extends CommonEntity> {
         return this.changeStatus(id, false);
     }
 
-    async getOne(filter: FindConditions<Entity> | string, options?: FindOneOptions<Entity>, eh?: (err: any) => Error | void): Promise<Entity> {
+    async getOne(condition: string | number | Date | ObjectID | FindConditions<Entity>, options?: FindOneOptions<Entity>, eh?: (err: any) => Error | void): Promise<Entity> {
         try {
-            const entity = await this.repository.findOne(filter, options);
+            const entity = await this.repository.findOne(condition, options);
             if (entity) {
                 return entity;
             }
@@ -237,8 +248,8 @@ export class Service<Entity extends CommonEntity> {
         }
     }
 
-    async get(id: string, options?: FindOneOptions<Entity>, eh?: (err: any) => Error | void): Promise<Entity> {
-        if (!id) {
+    async get(condition: string | number | Date | ObjectID | FindConditions<Entity>, options?: FindOneOptions<Entity>, eh?: (err: any) => Error | void): Promise<Entity> {
+        if (!condition) {
             return Promise.reject(this.gerError(Err.E_400_EMPTY_ID));
         }
         // const queryRunner = await getConnection().createQueryRunner();
@@ -259,7 +270,7 @@ export class Service<Entity extends CommonEntity> {
         //     };
         // }
         // queryRunner.release();
-        return await this.getOne(id, options, eh);
+        return await this.getOne(condition, options, eh);
     }
 
     async getAll(getAllDto?: GetAllDto, options?: FindManyOptions<Entity>, eh?: (err: any) => Error | void): Promise<GetAllResponse<Entity>> {
