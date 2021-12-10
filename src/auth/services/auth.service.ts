@@ -27,6 +27,7 @@ import { ChangePasswordDto } from "../dto/change-password.dto";
 import { Err } from "../../common/entity/entity.errors";
 import { isEmailVerification } from "../../common/methods/common.methods";
 import { UpdateDto } from "../dto/update.dto";
+import { ExchangeService } from "../../common/services/exchange.service";
 
 @Injectable()
 export class AuthService extends Service<Auth>{
@@ -51,6 +52,7 @@ export class AuthService extends Service<Auth>{
     constructor(
         @InjectRepository(AuthRepository) private authRepository: AuthRepository,
         protected logger: LoggerService,
+        private exchangeService: ExchangeService,
         private jwtService: JwtService,
         private verifyTokenService: VerifyTokenService,
         private emailService: EmailService
@@ -103,7 +105,9 @@ export class AuthService extends Service<Auth>{
 
     async updateRegistration(id: string, updateDto: UpdateDto): Promise<Auth> {
         const authDto = new AuthDto(updateDto);
-        return await this.createAlt({ ...authDto, id }, undefined, this.writeErrorHandler);
+        let auth = await this.createAlt({ ...authDto, id }, undefined, this.writeErrorHandler);
+        this.exchangeService.exchangeAuth(auth);
+        return auth;
     }
 
     async verify(verifyTokenDto: VerifyTokenDto): Promise<string> {

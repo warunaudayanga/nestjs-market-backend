@@ -115,7 +115,7 @@ export class Service<Entity extends CommonEntity> {
     async createAlt<T extends DeepPartial<Entity>>(entity: T, options?: SaveOptions, eh?: (err: any) => Error | void, interceptEmit?: boolean): Promise<Entity> {
 
         try {
-            let newEntity = await this.repository.saveAlt(entity, options);
+            const newEntity = await this.repository.saveAlt(entity, options);
             if (!interceptEmit) {
                 this.emit(await this.get(newEntity.id, { loadRelationIds: false }));
             }

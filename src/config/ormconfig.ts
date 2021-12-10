@@ -1,14 +1,15 @@
 import { TypeOrmModuleOptions } from "@nestjs/typeorm";
 
-export const dev: TypeOrmModuleOptions = {
-    type: "mysql",
-    host: "localhost",
-    port: 3306,
-    username: "root",
-    password: "",
-    database: "market-nest",
-    entities: ["dist/**/*.entity{.ts,.js}"],
-    synchronize: true
+// noinspection JSUnusedGlobalSymbols
+export const local: TypeOrmModuleOptions = {
+    // type: "mysql",
+    // host: "localhost",
+    // port: 3306,
+    // username: "root",
+    // password: "",
+    // database: "market-nest",
+    // entities: ["dist/**/*.entity{.ts,.js}"],
+    // synchronize: true
 };
 
 // noinspection JSUnusedGlobalSymbols
@@ -48,4 +49,4 @@ export const envDB: TypeOrmModuleOptions = {
     synchronize: process.env.DB_SYNC === "true"
 };
 
-export { envDB as prod };
+export { envDB as prod, jawsDB as dev };

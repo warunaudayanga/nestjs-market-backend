@@ -4,13 +4,19 @@ import { Auth } from "../../auth/entities/auth.entity";
 import { AuthService } from "../../auth/services/auth.service";
 import { FindManyOptions } from "typeorm";
 import { Injectable } from "@nestjs/common";
+import { ExchangeService } from "./exchange.service";
 
 @Injectable()
 export class SocketService {
 
     private clients: Client[] = []
 
-    constructor(private authService: AuthService) {}
+    constructor(private authService: AuthService, exchangeService: ExchangeService) {
+        exchangeService.onAuthExchange()
+            .subscribe(auth => {
+                this.emit("user", auth);
+            });
+    }
 
     addSocketClient(client: Socket, auth: Auth): void {
         const existingClient = this.clients.find(c => c.user_id === auth.id);
